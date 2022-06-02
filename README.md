@@ -65,16 +65,17 @@ bin/console -e test sulu:build prod
 
 There are several contexts you can use, depending on your need. See the according doc for examples.
 
-| Context                                   | Optional | Purpose                                                                                    |
-|-------------------------------------------|----------|--------------------------------------------------------------------------------------------|
-| [BrowserContext](doc/BrowserContext.md)   | No       | Navigate through the page.                                                                 |        
-| [SuluPageContext](doc/SuluPageContext.md) | No       | Create sulu pages and blocks.                                                              |
-| [FormContext](doc/FormContext.md)         | No       | Fill and submit web forms. Based on BrowserContext.                                        |
-| [DateContext](doc/DateContext.md)         | No       | Manipulate the "current" date the tests runs in.                                           |
-| [SuluMediaContext](doc/MediaContext.md)   | No       | Create sulu media.                                                                         |
-| SuluArticleContext                        | Yes      | Creating articles with the [SuluArticleBundle](https://github.com/sulu/SuluArticleBundle). |        
-| SuluFormContext                           | Yes      | Creating sulu forms with the [SuluFormBundle](https://github.com/sulu/SuluFormBundle).     |
-| WiP: SuluCommunityContext                 | Yes      | TODO: interaction with [SuluCommunityBundle](https://github.com/sulu/SuluCommunityBundle)  |
+| Context                                         | Optional | Purpose                                                                                    |
+|-------------------------------------------------|----------|--------------------------------------------------------------------------------------------|
+| [BrowserContext](doc/BrowserContext.md)         | No       | Navigate through the page.                                                                 |        
+| [FormContext](doc/FormContext.md)               | No       | Fill and submit web forms. Based on BrowserContext.                                        |
+| [SuluPageContext](doc/SuluPageContext.md)       | No       | Create sulu pages and blocks.                                                              |
+| [SuluSnippetContext](doc/SuluSnippetContext.md) | No       | Create sulu snippets and set them as default.                                              |
+| [SuluMediaContext](doc/SuluMediaContext.md)     | No       | Create sulu media.                                                                         |
+| [SuluDateContext](doc/SuluDateContext.md)       | No       | Manipulate the "current" date the tests runs in for sulu request-based date handling.      |
+| WiP: SuluArticleContext                         | Yes      | Creating articles with the [SuluArticleBundle](https://github.com/sulu/SuluArticleBundle). |        
+| WiP: SuluFormContext                            | Yes      | Creating sulu forms with the [SuluFormBundle](https://github.com/sulu/SuluFormBundle).     |
+| TODO: SuluCommunityContext                      | Yes      | TODO: interaction with [SuluCommunityBundle](https://github.com/sulu/SuluCommunityBundle)  |
 
 You need to enable the required context in your suites like this:
 
@@ -85,7 +86,7 @@ default:
     default:
       contexts:
         Elbformat\SuluBehatBundle\Context\BrowserContext
-        Elbformat\SuluBehatBundle\Context\PageContext
+        Elbformat\SuluBehatBundle\Context\SuluPageContext
 ```
 
 ## Example

@@ -10,13 +10,15 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 abstract class DatabaseContext implements Context
 {
-    /** @var EntityManagerInterface */
-    protected $em;
+    protected EntityManagerInterface $em;
 
-    public function __construct(EntityManagerInterface $em) { $this->em = $em; }
-
-    protected function exec(string $query)
+    public function __construct(EntityManagerInterface $em)
     {
-        $this->em->getConnection()->query($query)->execute();
+        $this->em = $em;
+    }
+
+    protected function exec(string $query): void
+    {
+        $this->em->getConnection()->executeQuery($query);
     }
 }

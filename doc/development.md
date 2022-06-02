@@ -1,8 +1,8 @@
-For local development you can build a docker image and use it.
+For local development you can use docker-compose.
 ```bash
-docker build . -f docker/Dockerfile.php -t sulu-behat-php
-docker run -it -v $(pwd):/var/www -w /var/www sulu-behat-php sh
+docker-compose run php sh
 composer install
+bin/console sulu:build dev -n
 ```
 
 Enable xdebug inside the container

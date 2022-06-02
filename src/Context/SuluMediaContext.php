@@ -1,14 +1,10 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Elbformat\SuluBehatBundle\Context;
 
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\ORM\EntityManagerInterface;
 use Sulu\Bundle\MediaBundle\Media\Manager\MediaManagerInterface;
-use Sulu\Bundle\PageBundle\Document\PageDocument;
-use Sulu\Bundle\PageBundle\Form\Type\PageDocumentType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
@@ -18,10 +14,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 final class SuluMediaContext extends DatabaseContext
 {
-    /**
-     * @var MediaManagerInterface
-     */
-    protected $mediaManager;
+    protected MediaManagerInterface $mediaManager;
 
     public function __construct(EntityManagerInterface $em, MediaManagerInterface $mediaManager)
     {
@@ -50,6 +43,7 @@ final class SuluMediaContext extends DatabaseContext
         $file = $data['file'] ?? '1px.jpg';
         $data['locale'] = 'de';
         $data['collection'] = 4;
+        // @todo inject project folder
         $uploadedFile = new UploadedFile(__DIR__ . '/../fixtures/' . $file, $filename);
         $this->mediaManager->save($uploadedFile, $data, 1);
     }

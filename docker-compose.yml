@@ -1,0 +1,18 @@
+version: '2.1'
+services:
+  mysql:
+    image: mariadb:10.6
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PW:-root}"
+      MYSQL_DATABASE: "test"
+      MYSQL_USER: "${DB_USER:-test}"
+      MYSQL_PASSWORD: "${DB_PASSWORD:-test}"
+      TZ: "Europe/Berlin"
+  php:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.php
+    depends_on:
+      - mysql
+    volumes:
+      - ./:/var/www

@@ -5,8 +5,6 @@ namespace Elbformat\SuluBehatBundle\Context;
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\ORM\EntityManagerInterface;
 use Sulu\Bundle\FormBundle\Manager\FormManager;
-use Sulu\Bundle\PageBundle\Document\PageDocument;
-use Sulu\Bundle\PageBundle\Form\Type\PageDocumentType;
 
 /**
  * Creating and testing sulu forms.
@@ -40,10 +38,5 @@ final class SuluFormContext extends DatabaseContext
     public function thereIsASuluForm(TableNode $tableNode): void
     {
         $this->formManager->save($tableNode->getRowsHash(),'de');
-    }
-
-    protected function exec(string $query)
-    {
-        $this->em->getConnection()->query($query)->execute();
     }
 }

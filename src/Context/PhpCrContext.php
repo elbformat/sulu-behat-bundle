@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Elbformat\SuluBehatBundle\Context;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Sulu\Bundle\ArticleBundle\Document\ArticleDocument;
-use Sulu\Bundle\PageBundle\Document\PageDocument;
 use Sulu\Bundle\PageBundle\Form\Type\PageDocumentType;
 use Sulu\Component\DocumentManager\DocumentManagerInterface;
+use Sulu\Component\Webspace\Manager\WebspaceManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 
 /**
@@ -18,23 +17,22 @@ use Symfony\Component\Form\FormFactoryInterface;
  */
 abstract class PhpCrContext extends DatabaseContext
 {
-    protected const WEBSPACE = 'warnermusic';
-    protected const LOCALE = 'de';
+    protected const LOCALE = 'TODO:de';
 
-    /** @var FormFactoryInterface */
-    protected $formFactory;
-
-    /** @var DocumentManagerInterface */
-    protected $docManager;
-
+    protected FormFactoryInterface $formFactory;
+    protected DocumentManagerInterface $docManager;
+    protected WebspaceManagerInterface $webspaceManager;
     /** @var array<int,string> */
-    private static $documentIdStack = [];
+    private static array $documentIdStack = [];
+    /** @var array<string,string> */
+    private static $documentRouteStack = [];
 
-    public function __construct(EntityManagerInterface $em, DocumentManagerInterface $docManager, FormFactoryInterface $formFactory)
+    public function __construct(EntityManagerInterface $em, DocumentManagerInterface $docManager, FormFactoryInterface $formFactory, WebspaceManagerInterface $webspaceManager)
     {
         parent::__construct($em);
         $this->docManager = $docManager;
         $this->formFactory = $formFactory;
+        $this->webspaceManager = $webspaceManager;
     }
 
     /**
@@ -43,19 +41,24 @@ abstract class PhpCrContext extends DatabaseContext
     public function resetDocumentIdStack(): void
     {
         self::$documentIdStack = [];
+        self::$documentRouteStack = [];
     }
 
-    /** @param ArticleDocument|PageDocument $document */
-    protected function saveDocument($document, array $data, string $formType = PageDocumentType::class, ?string $webSpaceKey = null)
+    /** @param mixed $document */
+    protected function saveDocument($document, array $data, string $formType = PageDocumentType::class, ?string $webSpaceKey = null, ?string $parentPath = null): void
     {
         // Bind data to form
         $initialData = [
             // disable csrf protection, since we can't produce a token, because the form is cached on the client
             'csrf_protection' => false,
         ];
-        if (null !== $webSpaceKey) {
-            $initialData['webspace_key'] = $webSpaceKey;
+        $initialData['webspace_key'] = $webSpaceKey ?? $this->getWebspaceKey();
+
+        if (null !== $parentPath) {
+            $parent = $this->getByPath($parentPath);
+            $document->setParent($parent);
         }
+
         $form = $this->formFactory->create($formType, $document, $initialData);
         $form->submit($data, false);
 
@@ -63,25 +66,41 @@ abstract class PhpCrContext extends DatabaseContext
         $persistOptions = [
             'clear_missing_content' => false,
         ];
-        $this->docManager->persist($document, self::LOCALE, $persistOptions);
-        $this->docManager->publish($document, self::LOCALE);
+        $this->docManager->persist($document, $this->getLocale(), $persistOptions);
+        $this->docManager->publish($document, $this->getLocale());
         $this->docManager->flush();
         self::$documentIdStack[] = $document->getUuid();
     }
 
-    /** Convert data with do notation into nested array structure */
+    protected function addModule(string $moduleName, string $blockName, array $moduleData): void
+    {
+        $data = [
+            $blockName => [
+                [
+                    'type' => $moduleName,
+                ],
+            ],
+        ];
+        foreach ($moduleData as $key => $val) {
+            $data[$blockName][0][$key] = $this->isJson($moduleName, $key) ? \json_decode($val, true, 512, JSON_THROW_ON_ERROR) : $val;
+        }
+
+        $this->saveDocument($this->getLastDocument(), $data);
+    }
+
+    /** Convert data with dot notation into nested array structure */
     protected function expandData(array $data): array
     {
         $newData = [];
         foreach ($data as $k => $v) {
             // Plain key
-            if (false === strpos((string) $k, '.')) {
+            if (false === strpos((string)$k, '.')) {
                 $newData[$k] = $this->replacePlaceholders($v);
                 continue;
             }
             $parts = explode('.', $k, 2);
             $deepStructure = $this->expandData([$parts[1] => $v]);
-            $newData[$parts[0]] = array_merge_recursive($newData[$parts[0]] ?? [],$deepStructure);
+            $newData[$parts[0]] = array_merge_recursive($newData[$parts[0]] ?? [], $deepStructure);
         }
 
         return $newData;
@@ -89,7 +108,7 @@ abstract class PhpCrContext extends DatabaseContext
 
     protected function replacePlaceholders(string $value): string
     {
-        if (preg_match('/\[DOCUMENT_ID\[(\d+)]]/',$value, $match)) {
+        if (preg_match('/\[DOCUMENT_ID\[(\d+)]]/', $value, $match)) {
             $value = preg_replace('/\[DOCUMENT_ID\[(\d+)]]/', self::$documentIdStack[$match[1]], $value);
         }
 
@@ -98,15 +117,46 @@ abstract class PhpCrContext extends DatabaseContext
 
     protected function isJson(string $module, string $field): bool
     {
-        switch ($module . '/' . $field) {
-            case 'events/events':
-            //case 'events/artists':
-            case 'songs/songs':
-            case 'songs/artists':
+        // @todo use heuristic instead of convention
+        switch ($module.'/'.$field) {
             case 'stage/block_link':
                 return true;
             default:
                 return false;
         }
     }
+
+    protected function addToRouteStack(string $path, string $uuid): void
+    {
+        self::$documentRouteStack[$path] = $uuid;
+    }
+
+    /** Get a created page by it's path */
+    protected function getByPath(string $path): object
+    {
+        // @rfe find by route via phpcr
+        return $this->docManager->find(self::$documentRouteStack[$path]);
+    }
+
+    protected function getWebspaceKey(): string
+    {
+        $webspaces = $this->webspaceManager->getWebspaceCollection()
+            ->getWebspaces();
+        if (!$webspaces) {
+            throw new \DomainException('No webspaces found!');
+        }
+
+        return array_keys($webspaces)[0];
+    }
+
+    protected function getLocale(): string
+    {
+        $webspace = $this->webspaceManager->findWebspaceByKey($this->getWebspaceKey());
+        if (null === $webspace) {
+            throw new \DomainException(sprintf('Webspace %s not found!',$webspace));
+        }
+        return $webspace->getDefaultLocalization()->getLanguage();
+    }
+
+    abstract protected function getLastDocument(): object;
 }

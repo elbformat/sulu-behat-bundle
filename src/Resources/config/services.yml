@@ -7,8 +7,14 @@ services:
     resource: '../../Context/*Context.php'
     # Dependencies must be checked first -> Will be done in compiler pass
     exclude:
-      - '../../Context/ArticleContext.php'
+      - '../../Context/SuluArticleContext.php'
+      - '../../Context/SuluCommunityContext.php'
       - '../../Context/SuluFormContext.php'
 
   # Aliases for autowiring
   Sulu\Component\DocumentManager\DocumentManagerInterface: '@sulu_document_manager.document_manager'
+
+  Elbformat\SuluBehatBundle\Sulu\DateTimeRequestProcessor:
+    decorates: 'sulu_core.request_processor.date_time'
+    tags:
+      - { name: 'sulu.context', context: "website" }

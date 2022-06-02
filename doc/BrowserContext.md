@@ -6,6 +6,7 @@ As no real browser is involved, you can only check the DOM and not javascript fu
 
 ## Examples
 
+Simple content page
 ```gherkin
 @sulu
 Feature:
@@ -18,7 +19,7 @@ Feature:
     And I should see "Hello World"
     And I should not see "Goodbye World"
     And I should see a div tag
-      | class | test |
+      | class | content |
     And I should not see a span tag
     """
     Impressum
@@ -29,7 +30,6 @@ Feature:
 ```
 
 Ajax Request
-
 ```gherkin
 @sulu
 Feature:
@@ -37,5 +37,4 @@ Feature:
   Scenario:
     Given I am logged in as admin
     When I send a POST request to "/admin/search"
-
 ```

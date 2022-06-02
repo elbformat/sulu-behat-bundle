@@ -24,12 +24,17 @@ final class SuluPageContext extends PhpCrContext
     {
         $this->exec('DELETE FROM phpcr_nodes WHERE id >= 1000');
         $this->exec('ALTER TABLE phpcr_nodes AUTO_INCREMENT=1000');
+        $this->exec('DELETE FROM phpcr_nodes_references WHERE source_id >= 1000 OR target_id >= 1000');
+        $this->exec("UPDATE phpcr_nodes set props = REGEXP_REPLACE(props, '<sv.+settings:snippets-.+<\/sv\:property>', '')");
     }
 
     /**
      * @Given there is a(n) :alias page
+     * @Given there is a(n) page
+     * @Given there is a(n) :alias page as child of :parent
+     * @Given there is a(n) page as child of :parent
      */
-    public function thereIsAPage(string $alias, TableNode $tableNode): void
+    public function thereIsAPage(TableNode $tableNode, string $alias = 'default', string $parent = null): void
     {
         /** @var PageDocument $document */
         $document = $this->docManager->create('page');
@@ -37,8 +42,9 @@ final class SuluPageContext extends PhpCrContext
         $data = $tableNode->getRowsHash();
         $data['template'] = $alias;
 
-        $this->saveDocument($document, $this->expandData($data), PageDocumentType::class, self::WEBSPACE);
+        $this->saveDocument($document, $this->expandData($data), PageDocumentType::class, null, $parent);
 
+        $this->addToRouteStack($document->getResourceSegment(), $document->getUuid());
         $this->lastDocument = $document;
     }
 
@@ -47,28 +53,15 @@ final class SuluPageContext extends PhpCrContext
      */
     public function thePageContainsAModuleIn(string $moduleName, string $blockName, TableNode $table = null): void
     {
-        if (null === $this->lastDocument) {
-            throw new \DomainException('You need to create a document first');
-        }
-
-        $data = [
-            $blockName => [
-                [
-                    'type' => $moduleName,
-                ],
-            ],
-        ];
-        $blockData = null !== $table ? $table->getRowsHash() : [];
-        $blockData = $this->expandData($blockData);
-        foreach ($blockData as $key => $val) {
-            $data[$blockName][0][$key] = $this->isJson($moduleName, $key) ? \json_decode($val, true, 512, JSON_THROW_ON_ERROR) : $val;
-        }
-
-        $this->saveDocument($this->lastDocument, $data, PageDocumentType::class, self::WEBSPACE);
+        $this->addModule($moduleName, $blockName, $table ? $table->getRowsHash() : []);
     }
 
-    public function getLastDocument(): ?PageDocument
+    protected function getLastDocument(): PageDocument
     {
+        if (null === $this->lastDocument) {
+            throw new \DomainException('No document queried.');
+        }
+
         return $this->lastDocument;
     }
 }

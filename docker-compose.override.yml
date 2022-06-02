@@ -1,0 +1,9 @@
+version: '2.1'
+services:
+  mysql:
+    ports:
+      - "127.0.0.1:3307:3306"
+  php:
+    environment:
+      XDEBUG_CONFIG: "client_host=172.17.0.1 idekey=PHPSTORM"
+      XDEBUG_MODE: "debug"

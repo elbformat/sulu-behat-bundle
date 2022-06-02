@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Elbformat\SuluBehatBundle\Context;
 
@@ -91,12 +89,6 @@ final class BrowserContext implements Context
         $this->doRequest(Request::create($targetUrl, 'GET', [], $this->cookies));
     }
 
-    public function submit(Form $form, array $extraData = []): void
-    {
-        $form->setValues($extraData);
-        $this->doRequest(Request::create($form->getUri(), $form->getMethod(), $form->getPhpValues(), $this->cookies));
-    }
-
     /**
      * Checks, that current page response status is equal to specified
      * Example: Then the response status code should be 200
@@ -121,7 +113,7 @@ final class BrowserContext implements Context
      *
      * @Then /^(?:|I )should see "(?P<text>(?:[^"]|\\")*)"$/
      */
-    public function assertPageContainsText(string $text)
+    public function assertPageContainsText(string $text): void
     {
         $regex = '/' . preg_quote($text, '/') . '/ui';
         $actual = $this->response->getContent();
@@ -133,7 +125,7 @@ final class BrowserContext implements Context
     /**
      * @Then /^(?:|I )should not see "(?P<text>(?:[^"]|\\")*)"$/
      */
-    public function assertPageNotContainsText(string $text)
+    public function assertPageNotContainsText(string $text): void
     {
         try {
             $this->assertPageContainsText($text);
@@ -144,24 +136,26 @@ final class BrowserContext implements Context
     }
 
     /**
-     * @Then I should see a(n) :tag tag( :content)
+     * @Then I should see a(n) :tag tag
+     * @Then I should see a(n) :tag tag :content
      */
-    public function ishouldSeeATag(string $tag, ?TableNode $table = null, ?string $content = null, ?PyStringNode $multiLineContent = null)
+    public function ishouldSeeATag(string $tag, ?TableNode $table = null, ?string $content = null, ?PyStringNode $multiLineContent = null): void
     {
         $this->mustContainTag($tag, $table ? $table->getRowsHash() : null, $multiLineContent ? $multiLineContent->getRaw() : $content);
     }
 
     /**
-     * @Then I should not see a(n) :tag tag( :content)
+     * @Then I should not see a(n) :tag tag
+     * @Then I should not see a(n) :tag tag :content
      */
-    public function ishouldNotSeeATag(string $tag, ?TableNode $table = null, ?string $content = null, ?PyStringNode $multiLineContent = null)
+    public function ishouldNotSeeATag(string $tag, ?TableNode $table = null, ?string $content = null, ?PyStringNode $multiLineContent = null): void
     {
         try {
             $this->mustContainTag($tag, $table ? $table->getRowsHash() : null, $multiLineContent ? $multiLineContent->getRaw() : $content);
         } catch (\DomainException $e) {
             return;
         }
-        throw new \Exception('Tag found');
+        throw new \DomainException('Tag found');
     }
 
     public function getCrawler(): Crawler
@@ -171,6 +165,12 @@ final class BrowserContext implements Context
         }
 
         return new Crawler($this->response->getContent(), $this->request->getUri());
+    }
+
+    public function submit(Form $form, array $extraData = []): void
+    {
+        $form->setValues($extraData);
+        $this->doRequest(Request::create($form->getUri(), $form->getMethod(), $form->getPhpValues(), $this->cookies));
     }
 
     protected function mustContainTag(string $tagName, ?array $attr = null, ?string $content = null): void

@@ -9,14 +9,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use ONGR\ElasticsearchBundle\Service\Manager;
 use Sulu\Bundle\ArticleBundle\Document\ArticleDocument;
 use Sulu\Bundle\ArticleBundle\Document\Form\ArticleDocumentType;
-use Sulu\Bundle\PageBundle\Document\BasePageDocument;
-use Sulu\Bundle\PageBundle\Document\PageDocument;
-use Sulu\Bundle\PageBundle\Form\Type\PageDocumentType;
-use Sulu\Component\Content\Document\Extension\ManagedExtensionContainer;
 use Sulu\Component\DocumentManager\DocumentManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
  * Simulates the admin part of sulu for articles.
@@ -25,11 +19,9 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
  */
 final class SuluArticleContext extends PhpCrContext
 {
-    /** @var ArticleDocument|null */
-    protected $lastDocument;
+    protected ?ArticleDocument $lastDocument = null;
 
-    /** @var Manager */
-    protected $esManager;
+    protected Manager $esManager;
 
     public function __construct(EntityManagerInterface $em, DocumentManagerInterface $docManager, FormFactoryInterface $formFactory, Manager $esManager)
     {
@@ -67,26 +59,17 @@ final class SuluArticleContext extends PhpCrContext
     /**
      * @Given the article contains a(n) :moduleName module in :blockName
      */
-    public function theArticleContainsAModuleIn(string $moduleName, string $blockName, TableNode $table = null)
+    public function theArticleContainsAModuleIn(string $moduleName, string $blockName, TableNode $table = null): void
+    {
+        $this->addModule($moduleName,$blockName,$table ? $table->getRowsHash() : []);
+    }
+
+    protected function getLastDocument(): ArticleDocument
     {
         if (null === $this->lastDocument) {
-            throw new \DomainException('You need to create a document first');
+            throw new \DomainException('No document queried.');
         }
-
-        $data = [
-            $blockName => [
-                [
-                    'type' => $moduleName,
-                ],
-            ],
-        ];
-        if (null !== $table) {
-            foreach ($table->getRowsHash() as $key => $val) {
-                $data[$blockName][0][$key] = SuluContext::isJson($moduleName, $key) ? \json_decode($val, true, 512, JSON_THROW_ON_ERROR) : $val;
-            }
-        }
-
-        $this->saveDocument($this->lastDocument, $data);
+        return $this->lastDocument;
     }
 
 }
