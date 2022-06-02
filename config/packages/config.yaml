@@ -1,0 +1,31 @@
+# This is a mock config to let this bundle run standalone (for automatic testing)
+parameters:
+  kernel.secret: 'test'
+
+doctrine:
+  dbal:
+    default_connection: default
+    connections:
+      default:
+        url: 'mysql://test:test@mysql:3306/test'
+  orm:
+    default_entity_manager: default
+    entity_managers:
+      default:
+        connection: default
+
+sulu_document_manager:
+  versioning:
+    enabled: false # See https://docs.sulu.io/en/2.0/bundles/page/versioning.html if you want to enable versioning
+  sessions:
+    # See https://docs.sulu.io/en/2.0/cookbook/jackrabbit.html if you want to use Jackrabbit
+    default:
+      backend:
+        type: doctrinedbal
+        connection: 'default'
+      workspace: "%env(PHPCR_WORKSPACE)%"
+    live:
+      backend:
+        type: doctrinedbal
+        connection: 'default'
+      workspace: "%env(PHPCR_WORKSPACE)%_live"

@@ -1,0 +1,15 @@
+default:
+  suites:
+    default:
+      filters:
+        tags: '~@admin'
+      contexts:
+        - Elbformat\SuluBehatBundle\Context\BrowserContext:
+        - Elbformat\SuluBehatBundle\Context\SuluPageContext:
+
+  extensions:
+    FriendsOfBehat\SymfonyExtension:
+      kernel:
+        class: Elbformat\SuluBehatBundle\Kernel
+    Elbformat\SuluBehatBundle\SuluExtension:
+      context: website

@@ -22,7 +22,19 @@
   "require": {
     "php": ">=7.4",
     "ext-dom": "*",
+    "ext-json": "*",
     "behat/behat": "^3.8",
-    "friends-of-behat/symfony-extension": "^2.2"
+    "friends-of-behat/symfony-extension": "^2.2",
+    "sulu/sulu": "^2.4"
+  },
+  "require-dev": {
+    "symfony/runtime": "^5.4",
+    "jackalope/jackalope": "^1.4",
+    "jackalope/jackalope-doctrine-dbal": "^1.7"
+  },
+  "config": {
+    "allow-plugins": {
+      "symfony/runtime": true
+    }
   }
 }

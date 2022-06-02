@@ -1,9 +1,12 @@
 <?php
 
-namespace Elbformat\SuluBehatBundle;
+namespace Elbformat\SuluBehatBundle\Helper;
 
 /**
  * Helper to find the difference in two complex array structures
+ * @author Hannes Giesenow <hannes.giesenow@elbformat.de>
+ *
+ * @todo make an extra packagist package from it
  */
 trait DiffTrait
 {

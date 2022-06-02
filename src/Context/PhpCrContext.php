@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Elbformat\SuluBehatBundle;
+namespace Elbformat\SuluBehatBundle\Context;
 
-use Behat\Behat\Context\Context;
 use Doctrine\ORM\EntityManagerInterface;
 use Sulu\Bundle\ArticleBundle\Document\ArticleDocument;
 use Sulu\Bundle\PageBundle\Document\PageDocument;

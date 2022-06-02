@@ -1,8 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
-declare(strict_types=1);
-
-namespace Elbformat\SuluBehatBundle;
+namespace Elbformat\SuluBehatBundle\Context;
 
 use Behat\Gherkin\Node\TableNode;
 use Sulu\Bundle\PageBundle\Document\PageDocument;
@@ -13,10 +11,9 @@ use Sulu\Bundle\PageBundle\Form\Type\PageDocumentType;
  *
  * @author Hannes Giesenow <hannes.giesenow@elbformat.de>
  */
-final class SuluContext extends PhpCrContext
+final class SuluPageContext extends PhpCrContext
 {
-    /** @var PageDocument|null */
-    protected $lastDocument;
+    protected ?PageDocument $lastDocument = null;
 
     /**
      * Clear all phpcr contents before each scenario
@@ -48,7 +45,7 @@ final class SuluContext extends PhpCrContext
     /**
      * @Given the page contains a(n) :moduleName module in :blockName
      */
-    public function thePageContainsAModuleIn(string $moduleName, string $blockName, TableNode $table = null)
+    public function thePageContainsAModuleIn(string $moduleName, string $blockName, TableNode $table = null): void
     {
         if (null === $this->lastDocument) {
             throw new \DomainException('You need to create a document first');

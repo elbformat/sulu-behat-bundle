@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Elbformat\SuluBehatBundle;
+namespace Elbformat\SuluBehatBundle\Context;
 
-use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\ORM\EntityManagerInterface;
 use ONGR\ElasticsearchBundle\Service\Manager;
@@ -24,7 +23,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
  *
  * @author Hannes Giesenow <hannes.giesenow@elbformat.de>
  */
-final class ArticleContext extends PhpCrContext
+final class SuluArticleContext extends PhpCrContext
 {
     /** @var ArticleDocument|null */
     protected $lastDocument;

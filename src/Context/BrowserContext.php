@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Elbformat\SuluBehatBundle;
+namespace Elbformat\SuluBehatBundle\Context;
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
@@ -25,13 +25,11 @@ use Symfony\Component\HttpKernel\KernelInterface;
 final class BrowserContext implements Context
 {
     private KernelInterface $kernel;
+    private ?Response $response = null;
+    private ?Request $request = null;
 
-    private ?Response $response;
-
-    private ?Request $request;
-
-    /** @var array */
-    private $cookies = [];
+    /** @var array<string,string> */
+    private array $cookies = [];
 
     public function __construct(KernelInterface $kernel)
     {
@@ -41,7 +39,7 @@ final class BrowserContext implements Context
     /**
      * @Given I am logged in as admin
      */
-    public function iAmLoggedInAsAdmin()
+    public function iAmLoggedInAsAdmin(): void
     {
         $jsonData = json_encode(['username' => 'admin', 'password' => 'admin'], JSON_THROW_ON_ERROR);
         $server = ['CONTENT_TYPE' => 'application/json'];
@@ -146,28 +144,20 @@ final class BrowserContext implements Context
     }
 
     /**
-     * @Then I should see a link to :url
+     * @Then I should see a(n) :tag tag( :content)
      */
-    public function iShouldSeeALinkTo(string $url)
+    public function ishouldSeeATag(string $tag, ?TableNode $table = null, ?string $content = null, ?PyStringNode $multiLineContent = null)
     {
-        $this->mustContainTag('a', ['href' => $url]);
+        $this->mustContainTag($tag, $table ? $table->getRowsHash() : null, $multiLineContent ? $multiLineContent->getRaw() : $content);
     }
 
     /**
-     * @Then I should see a(n) :tag tag
+     * @Then I should not see a(n) :tag tag( :content)
      */
-    public function ishouldSeeATag(string $tag, ?TableNode $table = null, ?PyStringNode $content = null)
-    {
-        $this->mustContainTag($tag, $table ? $table->getRowsHash() : null, $content ? $content->getRaw() : null);
-    }
-
-    /**
-     * @Then I should not see a(n) :tag tag
-     */
-    public function ishouldNotSeeATag(string $tag, ?TableNode $table = null, ?PyStringNode $content = null)
+    public function ishouldNotSeeATag(string $tag, ?TableNode $table = null, ?string $content = null, ?PyStringNode $multiLineContent = null)
     {
         try {
-            $this->mustContainTag($tag, $table ? $table->getRowsHash() : null, $content ? $content->getRaw() : null);
+            $this->mustContainTag($tag, $table ? $table->getRowsHash() : null, $multiLineContent ? $multiLineContent->getRaw() : $content);
         } catch (\DomainException $e) {
             return;
         }

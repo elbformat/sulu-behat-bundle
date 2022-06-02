@@ -1,8 +1,7 @@
 <?php declare(strict_types=1);
 
-namespace Elbformat\SuluBehatBundle;
+namespace Elbformat\SuluBehatBundle\Context;
 
-use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\ORM\EntityManagerInterface;
 use Sulu\Bundle\FormBundle\Manager\FormManager;
