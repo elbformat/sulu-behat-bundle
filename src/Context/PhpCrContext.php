@@ -95,10 +95,10 @@ abstract class PhpCrContext extends DatabaseContext
         foreach ($data as $k => $v) {
             // Plain key
             if (false === strpos((string)$k, '.')) {
-                $newData[$k] = $this->replacePlaceholders($v);
+                $newData[$k] = $this->replacePlaceholders((string)$v);
                 continue;
             }
-            $parts = explode('.', $k, 2);
+            $parts = explode('.', (string)$k, 2);
             $deepStructure = $this->expandData([$parts[1] => $v]);
             $newData[$parts[0]] = array_merge_recursive($newData[$parts[0]] ?? [], $deepStructure);
         }
@@ -109,7 +109,7 @@ abstract class PhpCrContext extends DatabaseContext
     protected function replacePlaceholders(string $value): string
     {
         if (preg_match('/\[DOCUMENT_ID\[(\d+)]]/', $value, $match)) {
-            $value = preg_replace('/\[DOCUMENT_ID\[(\d+)]]/', self::$documentIdStack[$match[1]], $value);
+            $value = preg_replace('/\[DOCUMENT_ID\[(\d+)]]/', self::$documentIdStack[(int)$match[1]], $value);
         }
 
         return $value;
@@ -146,14 +146,15 @@ abstract class PhpCrContext extends DatabaseContext
             throw new \DomainException('No webspaces found!');
         }
 
-        return array_keys($webspaces)[0];
+        return (string) array_keys($webspaces)[0];
     }
 
     protected function getLocale(): string
     {
-        $webspace = $this->webspaceManager->findWebspaceByKey($this->getWebspaceKey());
+        $webspaceKey = $this->getWebspaceKey();
+        $webspace = $this->webspaceManager->findWebspaceByKey($webspaceKey);
         if (null === $webspace) {
-            throw new \DomainException(sprintf('Webspace %s not found!',$webspace));
+            throw new \DomainException(sprintf('Webspace %s not found!', $webspaceKey));
         }
         return $webspace->getDefaultLocalization()->getLanguage();
     }

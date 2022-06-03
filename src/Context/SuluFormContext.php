@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Elbformat\SuluBehatBundle\Context;
 
@@ -37,6 +39,6 @@ final class SuluFormContext extends DatabaseContext
      */
     public function thereIsASuluForm(TableNode $tableNode): void
     {
-        $this->formManager->save($tableNode->getRowsHash(),'de');
+        $this->formManager->save($tableNode->getRowsHash(), 'de');
     }
 }

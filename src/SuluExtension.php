@@ -24,11 +24,11 @@ final class SuluExtension implements Extension
         return 'sulu_behat';
     }
 
-    public function initialize(ExtensionManager $extensionManager)
+    public function initialize(ExtensionManager $extensionManager): void
     {
     }
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
     }
 
@@ -37,8 +37,8 @@ final class SuluExtension implements Extension
         $builder
             ->addDefaultsIfNotSet()
             ->children()
-            ->scalarNode('context')->defaultNull()->end()
-            ->end();
+            ->scalarNode('context')->defaultNull()
+            ;
     }
 
     public function load(ContainerBuilder $container, array $config): void

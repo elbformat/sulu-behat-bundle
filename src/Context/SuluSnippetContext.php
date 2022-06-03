@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Elbformat\SuluBehatBundle\Context;
 
@@ -10,6 +12,7 @@ use Sulu\Bundle\SnippetBundle\Snippet\DefaultSnippetManagerInterface;
 use Sulu\Component\Content\Compat\Structure;
 use Sulu\Component\Content\Document\WorkflowStage;
 use Sulu\Component\DocumentManager\DocumentManagerInterface;
+use Sulu\Component\Webspace\Manager\WebspaceManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 
 /**
@@ -22,9 +25,9 @@ final class SuluSnippetContext extends PhpCrContext
     protected ?SnippetDocument $lastDocument = null;
     protected DefaultSnippetManagerInterface $defaultSnippetManager;
 
-    public function __construct(EntityManagerInterface $em, DocumentManagerInterface $docManager, FormFactoryInterface $formFactory, DefaultSnippetManagerInterface $defaultSnippetManager)
+    public function __construct(EntityManagerInterface $em, DocumentManagerInterface $docManager, FormFactoryInterface $formFactory, WebspaceManagerInterface $webspaceManager, DefaultSnippetManagerInterface $defaultSnippetManager)
     {
-        parent::__construct($em, $docManager, $formFactory);
+        parent::__construct($em, $docManager, $formFactory, $webspaceManager);
         $this->defaultSnippetManager = $defaultSnippetManager;
     }
 
@@ -52,12 +55,12 @@ final class SuluSnippetContext extends PhpCrContext
         $this->defaultSnippetManager->save(
             $this->getWebspaceKey(),
             $area,
-            $this->lastDocument->getUuid(),
+            $this->getLastDocument()->getUuid(),
             $this->getLocale(),
         );
     }
 
-    protected function getLastDocument(): object
+    protected function getLastDocument(): SnippetDocument
     {
         if (null === $this->lastDocument) {
             throw new \DomainException('No snippet queried.');
@@ -65,6 +68,4 @@ final class SuluSnippetContext extends PhpCrContext
 
         return $this->lastDocument;
     }
-
-
 }

@@ -10,3 +10,10 @@ Enable xdebug inside the container
 export XDEBUG_CONFIG="client_host=172.17.0.1 idekey=PHPSTORM"
 export XDEBUG_MODE="debug"
 ```
+
+Run tests
+```bash
+vendor/bin/phpunit
+vendor/bin/psalm
+vendor/bin/php-cs-fixer
+```

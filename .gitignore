@@ -1,4 +1,7 @@
 .idea
+build
+var
 vendor
 composer.lock
-var
+.php-cs-fixer.cache
+.phpunit.result.cache

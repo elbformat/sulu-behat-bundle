@@ -25,12 +25,16 @@
     "ext-json": "*",
     "behat/behat": "^3.8",
     "friends-of-behat/symfony-extension": "^2.2",
-    "sulu/sulu": "^2.4"
+    "sulu/sulu": "^2.4",
+    "elbformat/symfony-behat-bundle": "dev-main"
   },
   "require-dev": {
-    "symfony/runtime": "^5.4",
+    "friendsofphp/php-cs-fixer": "^3.3",
     "jackalope/jackalope": "^1.4",
-    "jackalope/jackalope-doctrine-dbal": "^1.7"
+    "jackalope/jackalope-doctrine-dbal": "^1.7",
+    "phpunit/phpunit": "^8.5",
+    "symfony/runtime": "^5.4",
+    "vimeo/psalm": "^4.13"
   },
   "config": {
     "allow-plugins": {

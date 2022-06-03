@@ -61,7 +61,7 @@ final class SuluArticleContext extends PhpCrContext
      */
     public function theArticleContainsAModuleIn(string $moduleName, string $blockName, TableNode $table = null): void
     {
-        $this->addModule($moduleName,$blockName,$table ? $table->getRowsHash() : []);
+        $this->addModule($moduleName, $blockName, $table ? $table->getRowsHash() : []);
     }
 
     protected function getLastDocument(): ArticleDocument
@@ -71,5 +71,4 @@ final class SuluArticleContext extends PhpCrContext
         }
         return $this->lastDocument;
     }
-
 }

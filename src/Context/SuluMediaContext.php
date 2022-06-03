@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Elbformat\SuluBehatBundle\Context;
 
@@ -39,8 +41,8 @@ final class SuluMediaContext extends DatabaseContext
     public function thereIsAnImage(?TableNode $tableNode = null): void
     {
         $data = $tableNode ? $tableNode->getRowsHash() : [];
-        $filename = $data['filename'] ?? '1px.jpg';
-        $file = $data['file'] ?? '1px.jpg';
+        $filename = (string) ($data['filename'] ?? '1px.jpg');
+        $file = (string) ($data['file'] ?? '1px.jpg');
         $data['locale'] = 'de';
         $data['collection'] = 4;
         // @todo inject project folder

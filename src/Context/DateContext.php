@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Elbformat\SuluBehatBundle\Context;
 
@@ -17,5 +19,4 @@ class DateContext implements Context
     {
         DateTimeRequestProcessor::$currentDate = new \DateTime($date);
     }
-
 }
