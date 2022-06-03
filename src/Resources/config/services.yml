@@ -11,6 +11,9 @@ services:
       - '../../Context/SuluCommunityContext.php'
       - '../../Context/SuluFormContext.php'
 
+  Elbformat\SuluBehatBundle\Context\BrowserContext:
+    parent: Elbformat\SymfonyBehatBundle\Context\BrowserContext
+
   # Aliases for autowiring
   Sulu\Component\DocumentManager\DocumentManagerInterface: '@sulu_document_manager.document_manager'
 
