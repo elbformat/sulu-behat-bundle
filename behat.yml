@@ -4,8 +4,17 @@ default:
       filters:
         tags: '~@admin'
       contexts:
+        - Elbformat\SymfonyBehatBundle\Context\CommandContext:
+#        - Elbformat\SymfonyBehatBundle\Context\LoggingContext:
         - Elbformat\SuluBehatBundle\Context\BrowserContext:
+        - Elbformat\SuluBehatBundle\Context\DateContext:
         - Elbformat\SuluBehatBundle\Context\SuluPageContext:
+        - Elbformat\SuluBehatBundle\Context\SuluSnippetContext:
+        - Elbformat\SuluBehatBundle\Context\SuluMediaContext:
+        # Only enable, when you have the according bundle installed
+        #- Elbformat\SuluBehatBundle\Context\SuluArticleContext:
+        #- Elbformat\SuluBehatBundle\Context\SuluFormContext:
+
 
   extensions:
     FriendsOfBehat\SymfonyExtension:
@@ -13,3 +22,33 @@ default:
         class: Elbformat\SuluBehatBundle\Kernel
     Elbformat\SuluBehatBundle\SuluExtension:
       context: website
+    DVDoug\Behat\CodeCoverage\Extension:
+      filter:
+        include:
+          directories:
+            'src': ~
+      reports:
+        html:
+          target: build/coverage
+admin:
+  suites:
+    default:
+      filters:
+        tags: '@admin'
+      contexts:
+        - Elbformat\SuluBehatBundle\Context\BrowserContext:
+        - Elbformat\SymfonyBehatBundle\Context\CommandContext:
+  extensions:
+    FriendsOfBehat\SymfonyExtension:
+      kernel:
+        class: Elbformat\SuluBehatBundle\Kernel
+    Elbformat\SuluBehatBundle\SuluExtension:
+      context: admin
+    DVDoug\Behat\CodeCoverage\Extension:
+      filter:
+        include:
+          directories:
+            'src': ~
+      reports:
+        html:
+          target: build/coverage-admin

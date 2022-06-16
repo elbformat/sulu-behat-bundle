@@ -42,5 +42,6 @@ return [
     FOS\JsRoutingBundle\FOSJsRoutingBundle::class => ['all' => true],
     FOS\HttpCacheBundle\FOSHttpCacheBundle::class => ['all' => true],
     FriendsOfBehat\SymfonyExtension\Bundle\FriendsOfBehatSymfonyExtensionBundle::class => ['test' => true],
+    Elbformat\SymfonyBehatBundle\ElbformatSymfonyBehatBundle::class => ['test' => true],
     Elbformat\SuluBehatBundle\ElbformatSuluBehatBundle::class => ['test' => true],
 ];

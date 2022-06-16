@@ -5,7 +5,7 @@ services:
 
   Elbformat\SuluBehatBundle\Context\:
     resource: '../../Context/*Context.php'
-    # Dependencies must be checked first -> Will be done in compiler pass
+    # Dependencies must be checked first -> Will be done in DI Extension
     exclude:
       - '../../Context/SuluArticleContext.php'
       - '../../Context/SuluCommunityContext.php'
@@ -14,8 +14,13 @@ services:
   Elbformat\SuluBehatBundle\Context\BrowserContext:
     parent: Elbformat\SymfonyBehatBundle\Context\BrowserContext
 
+  Elbformat\SuluBehatBundle\Context\SuluMediaContext:
+    arguments:
+      $projectDir: '%kernel.project_dir%'
+
   # Aliases for autowiring
   Sulu\Component\DocumentManager\DocumentManagerInterface: '@sulu_document_manager.document_manager'
+  Sulu\Bundle\MediaBundle\Collection\Manager\CollectionManagerInterface: '@sulu_media.collection_manager'
 
   Elbformat\SuluBehatBundle\Sulu\DateTimeRequestProcessor:
     decorates: 'sulu_core.request_processor.date_time'

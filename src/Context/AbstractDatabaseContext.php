@@ -10,7 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 /**
  * @author Hannes Giesenow <hannes.giesenow@elbformat.de>
  */
-abstract class DatabaseContext implements Context
+abstract class AbstractDatabaseContext implements Context
 {
     protected EntityManagerInterface $em;
 

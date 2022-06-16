@@ -26,17 +26,19 @@
     "behat/behat": "^3.8",
     "friends-of-behat/symfony-extension": "^2.2",
     "sulu/sulu": "^2.4",
-    "elbformat/symfony-behat-bundle": "dev-main"
+    "elbformat/symfony-behat-bundle": "^1.0"
   },
   "require-dev": {
+    "dvdoug/behat-code-coverage": "^5.2",
     "friendsofphp/php-cs-fixer": "^3.3",
     "jackalope/jackalope": "^1.4",
     "jackalope/jackalope-doctrine-dbal": "^1.7",
-    "phpunit/phpunit": "^8.5",
+    "phpunit/phpunit": "^9.5",
     "symfony/runtime": "^5.4",
     "vimeo/psalm": "^4.13"
   },
   "config": {
+    "sort-packages": true,
     "allow-plugins": {
       "symfony/runtime": true
     }

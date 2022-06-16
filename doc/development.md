@@ -16,4 +16,6 @@ Run tests
 vendor/bin/phpunit
 vendor/bin/psalm
 vendor/bin/php-cs-fixer
+phpdbg -qrr -d memory_limit=-1 vendor/bin/behat
+phpdbg -qrr -d memory_limit=-1 vendor/bin/behat --profile admin
 ```

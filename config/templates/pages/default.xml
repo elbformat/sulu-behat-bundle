@@ -70,6 +70,41 @@
                         </property>
                     </properties>
                 </type>
+                <type name="reference">
+                    <meta>
+                        <title lang="de">Referenz</title>
+                        <title lang="en">Reference</title>
+                    </meta>
+                    <properties>
+                        <property name="links" type="page_selection">
+                            <meta>
+                                <title lang="en">Links</title>
+                            </meta>
+                            <params>
+                                <param name="properties" type="collection">
+                                    <param name="title" value="title"/>
+                                    <param name="article" value="article"/>
+                                    <param name="excerptTitle" value="excerpt.title"/>
+                                    <param name="excerptDescription" value="excerpt.description"/>
+                                </param>
+                            </params>
+                        </property>
+                    </properties>
+                </type>
+                <type name="image">
+                    <meta>
+                        <title lang="de">Bild</title>
+                        <title lang="en">Image</title>
+                    </meta>
+                    <properties>
+                        <property name="images" type="media_selection">
+                            <meta>
+                                <title lang="de">Bild</title>
+                                <title lang="en">Image</title>
+                            </meta>
+                        </property>
+                    </properties>
+                </type>
             </types>
         </block>
     </properties>

@@ -13,7 +13,7 @@ use Sulu\Bundle\FormBundle\Manager\FormManager;
  *
  * @author Hannes Giesenow <hannes.giesenow@elbformat.de>
  */
-final class SuluFormContext extends DatabaseContext
+final class SuluFormContext extends AbstractDatabaseContext
 {
     protected FormManager $formManager;
 

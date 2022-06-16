@@ -1,3 +1,4 @@
 <div class="content">
-Hello World
+    <p>Hello World.</p>
+    <p>The current date is {{ app.request.attributes.get('_sulu').getAttribute('dateTime')|date('d.m.Y H:i:s') }}</p>
 </div>

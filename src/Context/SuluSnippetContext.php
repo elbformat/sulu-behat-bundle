@@ -20,26 +20,27 @@ use Symfony\Component\Form\FormFactoryInterface;
  *
  * @author Jens Stapelfeldt <jst@elbformat.de>
  */
-final class SuluSnippetContext extends PhpCrContext
+final class SuluSnippetContext extends AbstractPhpCrContext
 {
     protected ?SnippetDocument $lastDocument = null;
     protected DefaultSnippetManagerInterface $defaultSnippetManager;
 
     public function __construct(EntityManagerInterface $em, DocumentManagerInterface $docManager, FormFactoryInterface $formFactory, WebspaceManagerInterface $webspaceManager, DefaultSnippetManagerInterface $defaultSnippetManager)
     {
-        parent::__construct($em, $docManager, $formFactory, $webspaceManager);
+        parent::__construct($em, $webspaceManager, $docManager, $formFactory);
         $this->defaultSnippetManager = $defaultSnippetManager;
     }
 
     /**
-     * @Given there is a(n) sulu snippet
+     * @Given there is a(n) :template snippet
      */
-    public function thereIsASuluSnippet(TableNode $tableNode): void
+    public function thereIsASuluSnippet(TableNode $tableNode, string $template): void
     {
         /** @var SnippetDocument $document */
         $document = $this->docManager->create(Structure::TYPE_SNIPPET);
 
         $data = $tableNode->getRowsHash();
+        $data['template'] = $template;
 
         $document->setWorkflowStage(WorkflowStage::PUBLISHED);
         $this->saveDocument($document, $this->expandData($data), SnippetType::class);
