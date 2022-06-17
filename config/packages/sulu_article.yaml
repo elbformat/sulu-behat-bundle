@@ -1,0 +1,30 @@
+sulu_article:
+    index_name: 'test'
+    hosts:
+        - 'elasticsearch:9200'
+    types:
+        article:
+            translation_key: "sulu_article.article"
+    default_main_webspace:
+        - "test"
+
+sulu_route:
+    mappings:
+        Sulu\Bundle\ArticleBundle\Document\ArticleDocument:
+            generator: schema
+            options:
+                route_schema: '/articles/{object.getTitle()}'
+        Sulu\Bundle\ArticleBundle\Document\ArticlePageDocument:
+            generator: article_page
+            options:
+                route_schema: '{translator.trans("page")}-{object.getPageNumber()}'
+                parent: '{object.getParent().getRoutePath()}'
+
+ongr_elasticsearch:
+    analysis:
+        tokenizer:
+            pathTokenizer:
+                type: path_hierarchy
+        analyzer:
+            pathAnalyzer:
+                tokenizer: pathTokenizer

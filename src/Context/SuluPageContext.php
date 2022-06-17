@@ -28,6 +28,7 @@ final class SuluPageContext extends AbstractPhpCrContext
         /** @var PageDocument $document */
         $document = $this->docManager->create('page');
 
+        /** @var array<string, string> $data */
         $data = $tableNode->getRowsHash();
         $data['template'] = $template;
 
@@ -42,9 +43,13 @@ final class SuluPageContext extends AbstractPhpCrContext
     public function thePageContainsAModuleIn(string $moduleName, string $blockName, TableNode $table = null): void
     {
         if (null !== $table) {
-            $data = $this->expandData($table->getRowsHash());
+            /** @var array<string, string> $tableData */
+            $tableData = $table->getRowsHash();
+            $data = $this->expandData($tableData);
+        } else {
+            $data = [];
         }
-        $this->addModule($moduleName, $blockName, $data ?? []);
+        $this->addModule($moduleName, $blockName, $data);
     }
 
     protected function getLastDocument(): PageDocument

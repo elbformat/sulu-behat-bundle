@@ -22,6 +22,15 @@ abstract class AbstractSuluContext extends AbstractDatabaseContext
         $this->webspaceManager = $webspaceManager;
     }
 
+    /**
+     * @BeforeScenario
+     */
+    public function resetRoutes(): void
+    {
+        // @rfe run only once per scenarion (and not per inheriting context)
+        $this->exec('DELETE FROM ro_routes');
+    }
+
     protected function getWebspaceKey(): string
     {
         $webspaces = $this->webspaceManager->getWebspaceCollection()
@@ -41,5 +50,38 @@ abstract class AbstractSuluContext extends AbstractDatabaseContext
             throw new \DomainException(sprintf('Webspace %s not found!', $webspaceKey));
         }
         return $webspace->getDefaultLocalization()->getLanguage();
+    }
+
+    /**
+     * Convert data with dot notation into nested array structure
+     *
+     * @param array<string,string> $data
+     * @return array<string,mixed>
+     */
+    protected function expandData(array $data): array
+    {
+        $newData = [];
+        foreach ($data as $k => $v) {
+            // Plain key
+            if (false === strpos($k, '.')) {
+                $newData[$k] = $this->replacePlaceholders($v);
+                continue;
+            }
+            $parts = explode('.', $k, 2);
+            $deepStructure = $this->expandData([$parts[1] => $v]);
+            /** @var array<string,mixed> $existing */
+            $existing = $newData[$parts[0]] ?? [];
+            $newData[$parts[0]] = array_merge_recursive($existing, $deepStructure);
+        }
+
+        return $newData;
+    }
+
+    /** to be overridden by extending contexts */
+    protected function replacePlaceholders(string $value): string
+    {
+        // Replace line breaks
+        $value = str_replace('\n', "\n", $value);
+        return $value;
     }
 }

@@ -1,0 +1,13 @@
+<h1>{{ content.title }}</h1>
+
+<div>
+    {{ content.article|default()|raw }}
+</div>
+<section>
+        {% include 'block/block.html.twig' with {blocks:content.block} only %}
+</section>
+<ul>
+    {% for page in pages %}
+        <li><a href="{{ sulu_content_path(page.routePath) }}">{{ page.title|default('Page '~page.pageNumber) }}</a></li>
+    {% endfor %}
+</ul>

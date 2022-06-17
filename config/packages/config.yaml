@@ -77,3 +77,14 @@ massive_search:
 twig:
   default_path: '%kernel.project_dir%/templates'
   strict_variables: true
+
+monolog:
+  handlers:
+    main:
+      type: stream
+      path: "php://stderr"
+      level: warning
+      channels: ["!event","!console"]
+
+swiftmailer:
+  disable_delivery: true

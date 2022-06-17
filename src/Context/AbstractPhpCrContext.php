@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Elbformat\SuluBehatBundle\Context;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Sulu\Bundle\PageBundle\Document\PageDocument;
 use Sulu\Bundle\PageBundle\Form\Type\PageDocumentType;
 use Sulu\Component\DocumentManager\DocumentManagerInterface;
 use Sulu\Component\Webspace\Manager\WebspaceManagerInterface;
@@ -41,8 +42,7 @@ abstract class AbstractPhpCrContext extends AbstractSuluContext
         $this->exec("UPDATE phpcr_nodes set props = REGEXP_REPLACE(props, '<sv.+settings:snippets-.+<\/sv\:property>', '')");
     }
 
-    /** @param mixed $document */
-    protected function saveDocument($document, array $data, string $formType = PageDocumentType::class, ?bool $hasWebSpaceKey = null, ?int $parentId = null): void
+    protected function saveDocument(object $document, array $data, string $formType = PageDocumentType::class, ?bool $hasWebSpaceKey = null, ?int $parentId = null): void
     {
         // Bind data to form
         $initialData = [
@@ -53,7 +53,7 @@ abstract class AbstractPhpCrContext extends AbstractSuluContext
             $initialData['webspace_key'] = $this->getWebspaceKey();
         }
 
-        if (null !== $parentId) {
+        if (null !== $parentId && $document instanceof PageDocument) {
             $parent = $this->docManager->find($this->getIdentifierFromId($parentId));
             $document->setParent($parent);
         }
@@ -70,34 +70,24 @@ abstract class AbstractPhpCrContext extends AbstractSuluContext
         $this->docManager->flush();
     }
 
-    protected function addModule(string $moduleName, string $blockName, array $moduleData): void
+    /**
+     * @param array<string,mixed> $moduleData
+     */
+    protected function addModule(string $moduleName, string $blockName, array $moduleData, string $formType = PageDocumentType::class): void
     {
-        $data[$blockName][0] = $moduleData;
-        $data[$blockName][0]['type'] = $moduleName;
+        $moduleData['type'] = $moduleName;
+        $data = [
+            $blockName => [
+                $moduleData
+            ]
+        ];
 
-        $this->saveDocument($this->getLastDocument(), $data);
-    }
-
-    /** Convert data with dot notation into nested array structure */
-    protected function expandData(array $data): array
-    {
-        $newData = [];
-        foreach ($data as $k => $v) {
-            // Plain key
-            if (false === strpos((string)$k, '.')) {
-                $newData[$k] = $this->replacePlaceholders((string)$v);
-                continue;
-            }
-            $parts = explode('.', (string)$k, 2);
-            $deepStructure = $this->expandData([$parts[1] => $v]);
-            $newData[$parts[0]] = array_merge_recursive($newData[$parts[0]] ?? [], $deepStructure);
-        }
-
-        return $newData;
+        $this->saveDocument($this->getLastDocument(), $data, $formType);
     }
 
     protected function replacePlaceholders(string $value): string
     {
+        $value = parent::replacePlaceholders($value);
         if (preg_match('/IDENTIFIER\[(\d+)]/', $value, $match)) {
             $value = preg_replace('/IDENTIFIER\[(\d+)]/', $this->getIdentifierFromId((int) $match[1]), $value);
         }
@@ -107,7 +97,12 @@ abstract class AbstractPhpCrContext extends AbstractSuluContext
 
     protected function getIdentifierFromId(int $id): string
     {
-        return $this->em->getConnection()->fetchOne('SELECT identifier FROM phpcr_nodes WHERE id=:id',['id' => $id]);
+        /** @var false|string $identifier */
+        $identifier = $this->em->getConnection()->fetchOne('SELECT identifier FROM phpcr_nodes WHERE id=:id', ['id' => $id]);
+        if (false === $identifier) {
+            throw new \DomainException(sprintf('No phpcr node found for ID %d', $id));
+        }
+        return $identifier;
     }
 
     abstract protected function getLastDocument(): object;

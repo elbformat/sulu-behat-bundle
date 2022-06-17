@@ -39,6 +39,7 @@ final class SuluSnippetContext extends AbstractPhpCrContext
         /** @var SnippetDocument $document */
         $document = $this->docManager->create(Structure::TYPE_SNIPPET);
 
+        /** @var array<string, string> $data */
         $data = $tableNode->getRowsHash();
         $data['template'] = $template;
 

@@ -105,6 +105,20 @@
                         </property>
                     </properties>
                 </type>
+                <type name="form">
+                    <properties>
+                        <property name="form" type="single_form_selection">
+                            <meta>
+                                <title lang="de">Formular</title>
+                                <title lang="en">Form</title>
+                            </meta>
+
+                            <params>
+                                <param name="resourceKey" value="page"/>
+                            </params>
+                        </property>
+                    </properties>
+                </type>
             </types>
         </block>
     </properties>

@@ -62,6 +62,6 @@ final class SuluMediaContext extends AbstractSuluContext
 
     protected function findCollectionIdByKey(string $collectionKey): int
     {
-        return $this->collectionManager->getByKey($collectionKey,$this->getLocale())->getId();
+        return $this->collectionManager->getByKey($collectionKey, $this->getLocale())->getId();
     }
 }

@@ -1,0 +1,20 @@
+{% for block in blocks %}
+    {% if block.type == 'text' %}
+        <h2>{{ block.headline }}</h2>
+        <p>{{ block.text|raw }}</p>
+    {% elseif block.type == 'reference' %}
+        {% for page in block.links %}
+            <a href="{{ sulu_content_path(page.url) }}">{{ page.excerptTitle|default(page.title) }}</a>
+        {% endfor %}
+    {% elseif block.type == 'image' %}
+        {% for image in block.images %}
+            <img src="{{ image.url }}" alt="{{ image.title }}"/>
+        {% endfor %}
+    {% elseif block.type == 'form' %}
+        {% if app.request.get('send') != 'true' %}
+            {{ form(block.form) }}
+        {% else %}
+            {{ block.form.vars.data.form.translations.0.successText|raw }}
+        {% endif %}
+    {% endif %}
+{% endfor %}

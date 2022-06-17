@@ -3,6 +3,7 @@
 return [
     Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => ['all' => true],
     Symfony\Bundle\TwigBundle\TwigBundle::class => ['all' => true],
+    Symfony\Bundle\MonologBundle\MonologBundle::class => ['all' => true],
     Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle::class => ['all' => true],
     Sulu\Bundle\CoreBundle\SuluCoreBundle::class => ['all' => true],
     Doctrine\Bundle\DoctrineBundle\DoctrineBundle::class => ['all' => true],
@@ -41,6 +42,12 @@ return [
     FOS\RestBundle\FOSRestBundle::class => ['all' => true],
     FOS\JsRoutingBundle\FOSJsRoutingBundle::class => ['all' => true],
     FOS\HttpCacheBundle\FOSHttpCacheBundle::class => ['all' => true],
+    # Article Bundle
+    ONGR\ElasticsearchBundle\ONGRElasticsearchBundle::class => ['all' => true],
+    Sulu\Bundle\ArticleBundle\SuluArticleBundle::class => ['all' => true],
+    # Form Bundle
+    Sulu\Bundle\FormBundle\SuluFormBundle::class => ['all' => true],
+    # Behat
     FriendsOfBehat\SymfonyExtension\Bundle\FriendsOfBehatSymfonyExtensionBundle::class => ['test' => true],
     Elbformat\SymfonyBehatBundle\ElbformatSymfonyBehatBundle::class => ['test' => true],
     Elbformat\SuluBehatBundle\ElbformatSuluBehatBundle::class => ['test' => true],

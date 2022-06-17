@@ -5,15 +5,15 @@ default:
         tags: '~@admin'
       contexts:
         - Elbformat\SymfonyBehatBundle\Context\CommandContext:
-#        - Elbformat\SymfonyBehatBundle\Context\LoggingContext:
+        - Elbformat\SymfonyBehatBundle\Context\LoggingContext:
         - Elbformat\SuluBehatBundle\Context\BrowserContext:
         - Elbformat\SuluBehatBundle\Context\DateContext:
         - Elbformat\SuluBehatBundle\Context\SuluPageContext:
         - Elbformat\SuluBehatBundle\Context\SuluSnippetContext:
         - Elbformat\SuluBehatBundle\Context\SuluMediaContext:
         # Only enable, when you have the according bundle installed
-        #- Elbformat\SuluBehatBundle\Context\SuluArticleContext:
-        #- Elbformat\SuluBehatBundle\Context\SuluFormContext:
+        - Elbformat\SuluBehatBundle\Context\SuluArticleContext:
+        - Elbformat\SuluBehatBundle\Context\SuluFormContext:
 
 
   extensions:

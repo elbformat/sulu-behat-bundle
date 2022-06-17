@@ -10,6 +10,7 @@ use ONGR\ElasticsearchBundle\Service\Manager;
 use Sulu\Bundle\ArticleBundle\Document\ArticleDocument;
 use Sulu\Bundle\ArticleBundle\Document\Form\ArticleDocumentType;
 use Sulu\Component\DocumentManager\DocumentManagerInterface;
+use Sulu\Component\Webspace\Manager\WebspaceManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 
 /**
@@ -23,20 +24,19 @@ final class SuluArticleContext extends AbstractPhpCrContext
 
     protected Manager $esManager;
 
-    public function __construct(EntityManagerInterface $em, DocumentManagerInterface $docManager, FormFactoryInterface $formFactory, Manager $esManager)
+    public function __construct(EntityManagerInterface $em, WebspaceManagerInterface $webspaceManager, DocumentManagerInterface $docManager, FormFactoryInterface $formFactory, Manager $esManager)
     {
-        parent::__construct($em, $docManager, $formFactory);
+        parent::__construct($em, $webspaceManager, $docManager, $formFactory);
         $this->esManager = $esManager;
     }
 
     /**
      * Clear all ES contents before each scenario
      *
-     * @BeforeScenario @sulu
+     * @BeforeScenario
      */
     public function resetElasticSearch(): void
     {
-        $this->exec('DELETE FROM ro_routes');
         $this->esManager->dropAndCreateIndex();
     }
 
@@ -49,6 +49,7 @@ final class SuluArticleContext extends AbstractPhpCrContext
         $document = $this->docManager->create('article');
         $document->setStructureType($type);
 
+        /** @var array<string,string> $data */
         $data = null !== $tableNode ? $tableNode->getRowsHash() : [];
 
         $this->saveDocument($document, $this->expandData($data), ArticleDocumentType::class);
@@ -61,7 +62,14 @@ final class SuluArticleContext extends AbstractPhpCrContext
      */
     public function theArticleContainsAModuleIn(string $moduleName, string $blockName, TableNode $table = null): void
     {
-        $this->addModule($moduleName, $blockName, $table ? $table->getRowsHash() : []);
+        if (null !== $table) {
+            /** @var array<string, string> $tableData */
+            $tableData = $table->getRowsHash();
+            $data = $this->expandData($tableData);
+        } else {
+            $data = [];
+        }
+        $this->addModule($moduleName, $blockName, $data, ArticleDocumentType::class);
     }
 
     protected function getLastDocument(): ArticleDocument
