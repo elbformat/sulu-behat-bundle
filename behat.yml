@@ -30,6 +30,8 @@ default:
       reports:
         html:
           target: build/coverage
+        cobertura:
+          target: build/coverage.xml
 admin:
   suites:
     default:
@@ -52,3 +54,5 @@ admin:
       reports:
         html:
           target: build/coverage-admin
+        cobertura:
+          target: build/coverage-admin.xml
