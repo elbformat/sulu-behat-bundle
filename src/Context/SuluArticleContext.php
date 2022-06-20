@@ -18,7 +18,7 @@ use Symfony\Component\Form\FormFactoryInterface;
  *
  * @author Hannes Giesenow <hannes.giesenow@elbformat.de>
  */
-final class SuluArticleContext extends AbstractPhpCrContext
+class SuluArticleContext extends AbstractPhpCrContext
 {
     protected ?ArticleDocument $lastDocument = null;
 

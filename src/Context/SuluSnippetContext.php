@@ -20,7 +20,7 @@ use Symfony\Component\Form\FormFactoryInterface;
  *
  * @author Jens Stapelfeldt <jst@elbformat.de>
  */
-final class SuluSnippetContext extends AbstractPhpCrContext
+class SuluSnippetContext extends AbstractPhpCrContext
 {
     protected ?SnippetDocument $lastDocument = null;
     protected DefaultSnippetManagerInterface $defaultSnippetManager;

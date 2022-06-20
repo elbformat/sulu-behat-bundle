@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  *
  * @author Hannes Giesenow <hannes.giesenow@elbformat.de>
  */
-final class SuluMediaContext extends AbstractSuluContext
+class SuluMediaContext extends AbstractSuluContext
 {
     protected MediaManagerInterface $mediaManager;
     protected CollectionManagerInterface $collectionManager;

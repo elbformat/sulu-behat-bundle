@@ -1,6 +1,7 @@
 For local development you can use docker-compose.
 ```bash
-docker-compose run php sh
+docker-compose up -d
+docker-compose exec php bash
 composer install
 bin/console sulu:build dev -n
 bin/console sulu:document:init
