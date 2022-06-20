@@ -18,9 +18,9 @@ services:
 
   php:
     image: hgiesenow/php:7.4
-#    build:
-#      context: .
-#      dockerfile: docker/Dockerfile.php
+    environment:
+      DATABASE_URL: 'mysql://test:test@mysql:3306/test'
+
     depends_on:
       - mysql
     volumes:

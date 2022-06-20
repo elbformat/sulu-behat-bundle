@@ -11,7 +11,7 @@ doctrine:
     default_connection: default
     connections:
       default:
-        url: 'mysql://test:test@mysql:3306/test'
+        url: '%env(resolve:DATABASE_URL)%'
   orm:
     auto_generate_proxy_classes: true
     default_entity_manager: default

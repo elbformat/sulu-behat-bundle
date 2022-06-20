@@ -20,6 +20,8 @@ jobs:
     behat:
         docker:
             - image: 'hgiesenow/php:7.4'
+              environment:
+                  DATABASE_URL: 'mysql://test:test@localhost:3306/test'
             - image: 'mariadb:10.6'
               environment:
                   MYSQL_ROOT_PASSWORD: 'root'
@@ -27,6 +29,8 @@ jobs:
                   MYSQL_USER: 'test'
                   MYSQL_PASSWORD: 'test'
             - image: 'docker.elastic.co/elasticsearch/elasticsearch:7.17.0'
+              environment:
+                  discovery.type: "single-node"
         steps:
             - checkout
             - attach_workspace:
@@ -41,6 +45,8 @@ jobs:
     behat-admin:
         docker:
             - image: 'hgiesenow/php:7.4'
+              environment:
+                  DATABASE_URL: 'mysql://test:test@localhost:3306/test'
             - image: 'mariadb:10.6'
               environment:
                   MYSQL_ROOT_PASSWORD: 'root'
@@ -48,6 +54,8 @@ jobs:
                   MYSQL_USER: 'test'
                   MYSQL_PASSWORD: 'test'
             - image: 'docker.elastic.co/elasticsearch/elasticsearch:7.17.0'
+              environment:
+                  discovery.type: "single-node"
         steps:
             - checkout
             - attach_workspace:
