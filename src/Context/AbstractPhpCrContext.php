@@ -71,7 +71,7 @@ abstract class AbstractPhpCrContext extends AbstractSuluContext
     }
 
     /**
-     * @param array<string,mixed> $moduleData
+     * @param array<string|int,mixed> $moduleData
      */
     protected function addModule(string $moduleName, string $blockName, array $moduleData, string $formType = PageDocumentType::class): void
     {
