@@ -20,6 +20,7 @@ services:
     image: hgiesenow/php:7.4
     environment:
       DATABASE_URL: 'mysql://test:test@mysql:3306/test'
+      ELASTICSEARCH_HOST: 'elasticsearch:9200'
 
     depends_on:
       - mysql

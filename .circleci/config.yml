@@ -22,6 +22,7 @@ jobs:
             - image: 'hgiesenow/php:7.4'
               environment:
                   DATABASE_URL: 'mysql://test:test@127.0.0.1:3306/test'
+                  ELASTICSEARCH_HOST: '127.0.0.1:9200'
             - image: 'mariadb:10.6'
               environment:
                   MYSQL_ROOT_PASSWORD: 'root'
@@ -47,6 +48,7 @@ jobs:
             - image: 'hgiesenow/php:7.4'
               environment:
                   DATABASE_URL: 'mysql://test:test@127.0.0.1:3306/test'
+                  ELASTICSEARCH_HOST: '127.0.0.1:9200'
             - image: 'mariadb:10.6'
               environment:
                   MYSQL_ROOT_PASSWORD: 'root'
