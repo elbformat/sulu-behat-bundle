@@ -26,15 +26,14 @@ jobs:
             - checkout
             - attach_workspace:
                   at: '.'
-            - run:
-                - bin/console sulu:build dev -n
-                - bin/console sulu:document:init
-                - phpdbg -qrr -d memory_limit=-1 vendor/bin/behat
+            - run: 'bin/console sulu:build dev -n'
+            - run: 'bin/console sulu:document:init'
+            - run: 'phpdbg -qrr -d memory_limit=-1 vendor/bin/behat'
             - store_test_results:
                   path: 'build'
             - codecov/upload:
                   file: 'build/coverage.xml'
-    behatAdmin:
+    behat-admin:
         docker:
             - image: 'hgiesenow/php:7.4'
             - image: 'mariadb:10.6'
@@ -43,10 +42,9 @@ jobs:
             - checkout
             - attach_workspace:
                   at: '.'
-            - run:
-                  - bin/console sulu:build dev -n
-                  - bin/console sulu:document:init
-                  - phpdbg -qrr -d memory_limit=-1 vendor/bin/behat --profile admin
+            - run: 'bin/console sulu:build dev -n'
+            - run: 'bin/console sulu:document:init'
+            - run: 'phpdbg -qrr -d memory_limit=-1 vendor/bin/behat --profile admin'
             - store_test_results:
                   path: 'build'
             - codecov/upload:
