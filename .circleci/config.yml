@@ -86,8 +86,12 @@ workflows:
     test-workflow:
         jobs:
             - build
-            - phpunit:
+            - behat:
                 requires: ['build']
+            - behat-admin:
+                  requires: ['build']
+#            - phpunit:
+#                  requires: ['build']
             - php-cs-fixer:
                 requires: ['build']
             - psalm:
