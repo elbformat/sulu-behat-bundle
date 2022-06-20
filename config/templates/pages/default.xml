@@ -1,0 +1,125 @@
+<?xml version="1.0" ?>
+<!--
+    The default page type like a blog article with some fixed fields in the upper area
+-->
+<template xmlns="http://schemas.sulu.io/template/template"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns:xi="http://www.w3.org/2001/XInclude"
+          xsi:schemaLocation="http://schemas.sulu.io/template/template http://schemas.sulu.io/template/template-1.0.xsd">
+
+    <key>default</key>
+
+    <view>default</view>
+    <controller>\Sulu\Bundle\WebsiteBundle\Controller\DefaultController::indexAction</controller>
+    <cacheLifetime>2400</cacheLifetime>
+
+    <meta>
+        <title lang="en">Default</title>
+        <title lang="de">Standard</title>
+    </meta>
+
+    <properties>
+        <property name="url" type="resource_locator" mandatory="true">
+            <meta>
+                <title lang="en">Resourcelocator</title>
+                <title lang="de">Adresse</title>
+            </meta>
+
+            <tag name="sulu.rlp"/>
+        </property>
+        <property name="title" type="text_line" mandatory="true">
+            <meta>
+                <title lang="de">Seitentitel</title>
+                <title lang="en">Page title</title>
+                <info_text lang="de">Wird auch verwendet für die Navigation</info_text>
+                <info_text lang="en">Will be used for navigation, too</info_text>
+            </meta>
+
+            <tag name="sulu.rlp.part"/>
+        </property>
+
+        <block name="block"
+
+               minOccurs="0"
+               maxOccurs="100"
+               mandatory="false">
+
+            <meta>
+                <title lang="de">Inhalte</title>
+                <title lang="en">Content</title>
+            </meta>
+
+            <types>
+                <type name="text">
+                    <meta>
+                        <title lang="de">Text</title>
+                        <title lang="en">Text</title>
+                    </meta>
+                    <properties>
+                        <property name="headline" type="text_line" mandatory="true">
+                            <meta>
+                                <title lang="de">Button text</title>
+                                <title lang="en">Button text</title>
+                            </meta>
+                        </property>
+                        <property name="text" type="text_area">
+                            <meta>
+                                <title lang="de">Überschrift</title>
+                                <title lang="en">Headline</title>
+                            </meta>
+                        </property>
+                    </properties>
+                </type>
+                <type name="reference">
+                    <meta>
+                        <title lang="de">Referenz</title>
+                        <title lang="en">Reference</title>
+                    </meta>
+                    <properties>
+                        <property name="links" type="page_selection">
+                            <meta>
+                                <title lang="en">Links</title>
+                            </meta>
+                            <params>
+                                <param name="properties" type="collection">
+                                    <param name="title" value="title"/>
+                                    <param name="article" value="article"/>
+                                    <param name="excerptTitle" value="excerpt.title"/>
+                                    <param name="excerptDescription" value="excerpt.description"/>
+                                </param>
+                            </params>
+                        </property>
+                    </properties>
+                </type>
+                <type name="image">
+                    <meta>
+                        <title lang="de">Bild</title>
+                        <title lang="en">Image</title>
+                    </meta>
+                    <properties>
+                        <property name="images" type="media_selection">
+                            <meta>
+                                <title lang="de">Bild</title>
+                                <title lang="en">Image</title>
+                            </meta>
+                        </property>
+                    </properties>
+                </type>
+                <type name="form">
+                    <properties>
+                        <property name="form" type="single_form_selection">
+                            <meta>
+                                <title lang="de">Formular</title>
+                                <title lang="en">Form</title>
+                            </meta>
+
+                            <params>
+                                <param name="resourceKey" value="page"/>
+                            </params>
+                        </property>
+                    </properties>
+                </type>
+            </types>
+        </block>
+    </properties>
+</template>

@@ -1,0 +1,27 @@
+version: '2.1'
+services:
+  mysql:
+    image: mariadb:10.6
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PW:-root}"
+      MYSQL_DATABASE: "test"
+      MYSQL_USER: "${DB_USER:-test}"
+      MYSQL_PASSWORD: "${DB_PASSWORD:-test}"
+      TZ: "Europe/Berlin"
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    environment:
+      TZ: "Europe/Berlin"
+      discovery.type: "single-node"
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+
+  php:
+    image: hgiesenow/php:7.4
+#    build:
+#      context: .
+#      dockerfile: docker/Dockerfile.php
+    depends_on:
+      - mysql
+    volumes:
+      - ./:/var/www

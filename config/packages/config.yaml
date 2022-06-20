@@ -1,0 +1,90 @@
+# This is a mock config to let this bundle run standalone (for automatic testing)
+parameters:
+  kernel.secret: 'test'
+
+framework:
+  session:
+    handler_id: null
+
+doctrine:
+  dbal:
+    default_connection: default
+    connections:
+      default:
+        url: 'mysql://test:test@mysql:3306/test'
+  orm:
+    auto_generate_proxy_classes: true
+    default_entity_manager: default
+    entity_managers:
+      default:
+        connection: default
+        auto_mapping: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+
+sulu_document_manager:
+  versioning:
+    enabled: false # See https://docs.sulu.io/en/2.0/bundles/page/versioning.html if you want to enable versioning
+  sessions:
+    # See https://docs.sulu.io/en/2.0/cookbook/jackrabbit.html if you want to use Jackrabbit
+    default:
+      backend:
+        type: doctrinedbal
+        connection: 'default'
+      workspace: "workspace"
+    live:
+      backend:
+        type: doctrinedbal
+        connection: 'default'
+      workspace: "workspace_live"
+
+security:
+  encoders:
+    Sulu\Bundle\SecurityBundle\Entity\User: bcrypt
+  providers:
+    sulu:
+      id: sulu_security.user_provider
+  access_control:
+    - { path: ^/admin/reset, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/admin/security/reset, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/admin/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/admin/_wdt, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/admin/translations, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/admin$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/admin/$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/admin/p/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/admin, roles: ROLE_USER }
+  firewalls:
+    admin:
+      pattern: ^/admin(\/|$)
+      anonymous: true
+      lazy: true
+      provider: sulu
+      entry_point: sulu_security.authentication_entry_point
+      json_login:
+        check_path: sulu_admin.login_check
+        success_handler: sulu_security.authentication_handler
+        failure_handler: sulu_security.authentication_handler
+      logout:
+        path: sulu_admin.logout
+        success_handler: sulu_security.logout_success_handler
+sulu_security:
+  checker:
+    enabled: true
+
+massive_search:
+  adapter: test
+
+twig:
+  default_path: '%kernel.project_dir%/templates'
+  strict_variables: true
+
+monolog:
+  handlers:
+    main:
+      type: stream
+      path: "php://stderr"
+      level: warning
+      channels: ["!event","!console"]
+
+swiftmailer:
+  disable_delivery: true

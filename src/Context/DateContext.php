@@ -1,9 +1,11 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace Elbformat\SuluBehatBundle;
+declare(strict_types=1);
 
-use App\Tests\Sulu\DateTimeRequestProcessor;
+namespace Elbformat\SuluBehatBundle\Context;
+
 use Behat\Behat\Context\Context;
+use Elbformat\SuluBehatBundle\Sulu\DateTimeRequestProcessor;
 
 /**
  * @author Hannes Giesenow <hannes.giesenow@elbformat.de>
@@ -13,9 +15,8 @@ class DateContext implements Context
     /**
      * @Given the current date is :date
      */
-    public function theCurrentDateIs($date)
+    public function theCurrentDateIs(string $date): void
     {
         DateTimeRequestProcessor::$currentDate = new \DateTime($date);
     }
-
 }

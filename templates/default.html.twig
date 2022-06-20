@@ -1,0 +1,13 @@
+<div class="content">
+    <h1>{{ content.title }}</h1>
+    <p>{{ content.url }}</p>
+    <section>
+        {% include 'block/block.html.twig' with {blocks:content.block} only %}
+    </section>
+
+    {% set snippet = sulu_snippet_load_by_area('default-area') %}
+    {% if snippet %}
+        <h3>{{ snippet.content.title }}</h3>
+        <p>{{ snippet.content.description }}</p>
+    {% endif %}
+</div>
