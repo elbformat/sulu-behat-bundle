@@ -36,8 +36,9 @@ jobs:
             - checkout
             - attach_workspace:
                   at: '.'
-            - run: 'bin/console sulu:document:init'
+            - run: 'sleep 10' # Wait for elasticsearch
             - run: 'bin/console sulu:build dev -n'
+            - run: 'bin/console sulu:document:init'
             - run: 'phpdbg -qrr -d memory_limit=-1 vendor/bin/behat'
             - store_test_results:
                   path: 'build'
@@ -62,8 +63,8 @@ jobs:
             - checkout
             - attach_workspace:
                   at: '.'
-            - run: 'bin/console sulu:document:init'
             - run: 'bin/console sulu:build dev -n'
+            - run: 'bin/console sulu:document:init'
             - run: 'phpdbg -qrr -d memory_limit=-1 vendor/bin/behat --profile admin'
             - store_test_results:
                   path: 'build'
