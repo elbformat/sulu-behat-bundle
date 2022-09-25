@@ -29,17 +29,17 @@
     "elbformat/symfony-behat-bundle": "^1.0"
   },
   "require-dev": {
-    "dvdoug/behat-code-coverage": "^5.2",
-    "friendsofphp/php-cs-fixer": "^3.3",
+    "dvdoug/behat-code-coverage": "5.2.2",
+    "friendsofphp/php-cs-fixer": "3.11.0",
     "handcraftedinthealps/elasticsearch-bundle": "5.2.6.9",
-    "jackalope/jackalope": "^1.4",
-    "jackalope/jackalope-doctrine-dbal": "^1.7",
-    "phpunit/phpunit": "^9.5",
-    "sulu/article-bundle": "^2.3",
-    "sulu/sulu-form-bundle": "^2.4",
+    "jackalope/jackalope": "1.4.5",
+    "jackalope/jackalope-doctrine-dbal": "1.8.0",
+    "phpunit/phpunit": "9.5.25",
+    "sulu/article-bundle": "2.4.0",
+    "sulu/sulu-form-bundle": "2.5.0",
     "symfony/monolog-bundle": "^3.8",
     "symfony/runtime": "^5.4",
-    "vimeo/psalm": "^4.13"
+    "vimeo/psalm": "4.27.0"
   },
   "config": {
     "sort-packages": true,
