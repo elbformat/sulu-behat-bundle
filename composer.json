@@ -37,8 +37,8 @@
     "phpunit/phpunit": "^9.5",
     "sulu/article-bundle": "^2.3",
     "sulu/sulu-form-bundle": "^2.4",
-    "symfony/monolog-bundle": "^3.8",
-    "symfony/runtime": "^5.4",
+    "symfony/monolog-bundle": "3.8.0",
+    "symfony/runtime": "5.4.11",
     "vimeo/psalm": "^4.13"
   },
   "config": {
