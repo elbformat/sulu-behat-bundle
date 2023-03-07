@@ -13,7 +13,7 @@ use Sulu\Bundle\PageBundle\Form\Type\PageDocumentType;
  *
  * @author Hannes Giesenow <hannes.giesenow@elbformat.de>
  */
-final class SuluPageContext extends AbstractPhpCrContext
+class SuluPageContext extends AbstractPhpCrContext
 {
     protected ?PageDocument $lastDocument = null;
 

@@ -38,7 +38,7 @@ final class SuluExtension implements Extension
             ->addDefaultsIfNotSet()
             ->children()
             ->scalarNode('context')->defaultNull()
-            ;
+        ;
     }
 
     public function load(ContainerBuilder $container, array $config): void

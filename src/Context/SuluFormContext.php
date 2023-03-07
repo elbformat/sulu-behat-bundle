@@ -16,7 +16,7 @@ use Sulu\Component\Webspace\Manager\WebspaceManagerInterface;
  *
  * @author Hannes Giesenow <hannes.giesenow@elbformat.de>
  */
-final class SuluFormContext extends AbstractSuluContext
+class SuluFormContext extends AbstractSuluContext
 {
     protected FormManager $formManager;
     protected ?Form $lastForm = null;
