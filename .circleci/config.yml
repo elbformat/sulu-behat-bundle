@@ -10,7 +10,7 @@ orbs:
 jobs:
     build:
         docker:
-            - image: 'hgiesenow/php:7.4'
+            - image: 'ghcr.io/elbformat/sulu-behat-bundle/php'
         steps:
             - checkout
             - run: 'composer install --dev'
@@ -19,10 +19,11 @@ jobs:
                 paths: 'vendor'
     behat:
         docker:
-            - image: 'hgiesenow/php:7.4'
+            - image: 'ghcr.io/elbformat/sulu-behat-bundle/php'
               environment:
-                  DATABASE_URL: 'mysql://test:test@127.0.0.1:3306/test'
+                  DATABASE_URL: 'mysql://test:test@127.0.0.1:3306/test?serverVersion=mariadb-10.6.15'
                   ELASTICSEARCH_HOST: '127.0.0.1:9200'
+                  MAILER_DSN: 'null://localhost'
             - image: 'mariadb:10.6'
               environment:
                   MYSQL_ROOT_PASSWORD: 'root'
@@ -46,10 +47,11 @@ jobs:
                   file: 'build/coverage.xml'
     behat-admin:
         docker:
-            - image: 'hgiesenow/php:7.4'
+            - image: 'ghcr.io/elbformat/sulu-behat-bundle/php'
               environment:
-                  DATABASE_URL: 'mysql://test:test@127.0.0.1:3306/test'
+                  DATABASE_URL: 'mysql://test:test@127.0.0.1:3306/test?serverVersion=mariadb-10.6.15'
                   ELASTICSEARCH_HOST: '127.0.0.1:9200'
+                  MAILER_DSN: 'null://localhost'
             - image: 'mariadb:10.6'
               environment:
                   MYSQL_ROOT_PASSWORD: 'root'
@@ -74,7 +76,7 @@ jobs:
 # Unittests are incomplete by now
 #    phpunit:
 #        docker:
-#            - image: 'hgiesenow/php:7.4'
+#            - image: 'hgiesenow/php:8.1'
 #        steps:
 #            - checkout
 #            - attach_workspace:
@@ -86,7 +88,7 @@ jobs:
 #                  file: 'build/clover.xml'
     php-cs-fixer:
         docker:
-            - image: 'hgiesenow/php:7.4'
+            - image: 'ghcr.io/elbformat/sulu-behat-bundle/php'
         steps:
             - checkout
             - attach_workspace:
@@ -95,7 +97,7 @@ jobs:
             - run: 'vendor/bin/php-cs-fixer fix --diff --dry-run tests'
     psalm:
         docker:
-            - image: 'hgiesenow/php:7.4'
+            - image: 'ghcr.io/elbformat/sulu-behat-bundle/php'
         steps:
             - checkout
             - attach_workspace:

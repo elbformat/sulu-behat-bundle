@@ -17,10 +17,11 @@ services:
       ES_JAVA_OPTS: "-Xms1g -Xmx1g"
 
   php:
-    image: hgiesenow/php:7.4
+    image: ghcr.io/elbformat/sulu-behat-bundle/php
     environment:
-      DATABASE_URL: 'mysql://test:test@mysql:3306/test'
+      DATABASE_URL: 'mysql://test:test@mysql:3306/test?serverVersion=mariadb-10.6.15'
       ELASTICSEARCH_HOST: 'elasticsearch:9200'
+      MAILER_DSN: 'null://localhost'
 
     depends_on:
       - mysql
