@@ -70,8 +70,8 @@ bin/console -e test sulu:build prod
 
 You can then run the tests in default oder admin profile.
 ```shell
-venbdor/bin/behat
-venbdor/bin/behat --profile admin
+vendor/bin/behat
+vendor/bin/behat --profile admin
 ```
 
 ## Examples

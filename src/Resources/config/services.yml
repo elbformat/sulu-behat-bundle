@@ -11,8 +11,9 @@ services:
       - '../../Context/SuluCommunityContext.php'
       - '../../Context/SuluFormContext.php'
 
-  Elbformat\SuluBehatBundle\Context\BrowserContext:
-    parent: Elbformat\SymfonyBehatBundle\Context\BrowserContext
+  Elbformat\SuluBehatBundle\Context\SuluAdminContext:
+    arguments:
+      $state: '@Elbformat\SymfonyBehatBundle\Browser\State'
 
   Elbformat\SuluBehatBundle\Context\SuluMediaContext:
     arguments:

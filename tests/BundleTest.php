@@ -18,7 +18,7 @@ class BundleTest extends TestCase
     {
         $bundle = new ElbformatSuluBehatBundle();
         $container = $this->createMock(ContainerBuilder::class);
-//        $container->expects($this->once())->method('addCompilerPass')->with($this->isInstanceOf(DynamicServicesPass::class))->willReturn(null);
+        //        $container->expects($this->once())->method('addCompilerPass')->with($this->isInstanceOf(DynamicServicesPass::class))->willReturn(null);
         $bundle->build($container);
     }
 }

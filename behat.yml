@@ -6,7 +6,9 @@ default:
       contexts:
         - Elbformat\SymfonyBehatBundle\Context\CommandContext:
         - Elbformat\SymfonyBehatBundle\Context\LoggingContext:
-        - Elbformat\SuluBehatBundle\Context\BrowserContext:
+        - Elbformat\SymfonyBehatBundle\Context\HtmlContext:
+        - Elbformat\SymfonyBehatBundle\Context\HttpContext:
+        - Elbformat\SymfonyBehatBundle\Context\FormContext:
         - Elbformat\SuluBehatBundle\Context\DateContext:
         - Elbformat\SuluBehatBundle\Context\SuluPageContext:
         - Elbformat\SuluBehatBundle\Context\SuluSnippetContext:
@@ -38,8 +40,10 @@ admin:
       filters:
         tags: '@admin'
       contexts:
-        - Elbformat\SuluBehatBundle\Context\BrowserContext:
+        - Elbformat\SymfonyBehatBundle\Context\HttpContext:
+        - Elbformat\SuluBehatBundle\Context\SuluAdminContext:
         - Elbformat\SymfonyBehatBundle\Context\CommandContext:
+        - Elbformat\SymfonyBehatBundle\Context\JsonContext:
   extensions:
     FriendsOfBehat\SymfonyExtension:
       kernel:

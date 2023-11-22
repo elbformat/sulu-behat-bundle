@@ -5,6 +5,8 @@ parameters:
 framework:
   session:
     handler_id: null
+  mailer:
+    dsn: '%env(MAILER_DSN)%'
 
 doctrine:
   dbal:
@@ -38,7 +40,7 @@ sulu_document_manager:
       workspace: "workspace_live"
 
 security:
-  encoders:
+  password_hashers:
     Sulu\Bundle\SecurityBundle\Entity\User: bcrypt
   providers:
     sulu:
@@ -56,7 +58,6 @@ security:
   firewalls:
     admin:
       pattern: ^/admin(\/|$)
-      anonymous: true
       lazy: true
       provider: sulu
       entry_point: sulu_security.authentication_entry_point
@@ -66,7 +67,6 @@ security:
         failure_handler: sulu_security.authentication_handler
       logout:
         path: sulu_admin.logout
-        success_handler: sulu_security.logout_success_handler
 sulu_security:
   checker:
     enabled: true
@@ -85,6 +85,3 @@ monolog:
       path: "php://stderr"
       level: warning
       channels: ["!event","!console"]
-
-swiftmailer:
-  disable_delivery: true
