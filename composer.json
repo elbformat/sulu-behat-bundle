@@ -42,7 +42,7 @@
     "symfony/monolog-bridge": "5.4.*",
     "symfony/monolog-bundle": "^3.8",
     "symfony/runtime": "5.4.*",
-    "vimeo/psalm": "^4.13"
+    "vimeo/psalm": "^5.0"
   },
   "config": {
     "sort-packages": true,
