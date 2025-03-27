@@ -30,7 +30,7 @@ jobs:
                   MYSQL_DATABASE: 'test'
                   MYSQL_USER: 'test'
                   MYSQL_PASSWORD: 'test'
-            - image: 'docker.elastic.co/elasticsearch/elasticsearch:7.17.0'
+            - image: 'docker.elastic.co/elasticsearch/elasticsearch:8.17.4'
               environment:
                   discovery.type: "single-node"
         steps:
@@ -58,7 +58,7 @@ jobs:
                   MYSQL_DATABASE: 'test'
                   MYSQL_USER: 'test'
                   MYSQL_PASSWORD: 'test'
-            - image: 'docker.elastic.co/elasticsearch/elasticsearch:7.17.0'
+            - image: 'docker.elastic.co/elasticsearch/elasticsearch:8.17.4'
               environment:
                   discovery.type: "single-node"
         steps:
