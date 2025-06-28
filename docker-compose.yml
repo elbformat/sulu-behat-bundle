@@ -10,7 +10,7 @@ services:
       TZ: "Europe/Berlin"
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.29
     environment:
       TZ: "Europe/Berlin"
       discovery.type: "single-node"
