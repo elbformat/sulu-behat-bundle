@@ -27,7 +27,7 @@
     "elbformat/symfony-behat-bundle": "^1.5",
     "friends-of-behat/symfony-extension": "^2.2",
     "sulu/sulu": "^2.4",
-    "symfony/event-dispatcher": "5.4.*"
+    "symfony/event-dispatcher": "5.4.*|6.x"
   },
   "require-dev": {
     "dvdoug/behat-code-coverage": "^5.2",
@@ -38,10 +38,10 @@
     "phpunit/phpunit": "^9.5",
     "sulu/article-bundle": "^2.3",
     "sulu/sulu-form-bundle": "^2.4",
-    "symfony/mailer": "5.4.*",
-    "symfony/monolog-bridge": "5.4.*",
+    "symfony/mailer": "5.4.*|6.x",
+    "symfony/monolog-bridge": "5.4.*|6.x",
     "symfony/monolog-bundle": "^3.8",
-    "symfony/runtime": "5.4.*",
+    "symfony/runtime": "5.4.*|6.x",
     "vimeo/psalm": "^4.13"
   },
   "config": {
