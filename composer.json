@@ -27,7 +27,7 @@
     "elbformat/symfony-behat-bundle": "^1.5",
     "friends-of-behat/symfony-extension": "^2.2",
     "sulu/sulu": "^2.4",
-    "symfony/event-dispatcher": "5.4.*|6.x"
+    "symfony/event-dispatcher": "5.4.*|6.x|7.3.*"
   },
   "require-dev": {
     "dvdoug/behat-code-coverage": "^5.2",
