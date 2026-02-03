@@ -1,4 +1,4 @@
-FROM hgiesenow/php:8.1
+FROM hgiesenow/php:8.2
 LABEL org.opencontainers.image.source="https://github.com/elbformat/sulu-behat-bundle"
 
 # ext-intl
