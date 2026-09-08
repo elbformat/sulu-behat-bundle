@@ -1,0 +1,22 @@
+name: Tests
+
+on:
+  pull_request:
+    branches: [ 'main' ]
+
+jobs:
+  unittests:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/${{ github.repository }}/php:${{matrix.php_version}}
+    strategy:
+      fail-fast: true
+      matrix:
+        php_version: ['8.3','8.4','8.5']
+        sulu_version: ['3.0']
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update Dependencies
+        run: composer require sulu/sulu:"${{matrix.sulu_version}}.*"
+      - name: Run test
+        run: vendor/bin/phpunit

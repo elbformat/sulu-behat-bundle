@@ -31,7 +31,7 @@ class SuluMediaContext extends AbstractSuluContext
     }
 
     /**
-     * Clear all media contents before each scenario
+     * Clear all media contents before each scenario.
      *
      * @BeforeScenario
      */
@@ -48,13 +48,13 @@ class SuluMediaContext extends AbstractSuluContext
     public function thereIsAnImage(?TableNode $tableNode = null, string $collection = 'sulu_media'): void
     {
         $data = $tableNode ? $tableNode->getRowsHash() : [];
-        $file = (string)($data['file'] ?? 'tests/fixtures/1px.jpg');
-        $filename = (string)($data['filename'] ?? basename($file));
+        $file = (string) ($data['file'] ?? 'tests/fixtures/1px.jpg');
+        $filename = (string) ($data['filename'] ?? basename($file));
         $data['locale'] = $this->getLocale();
         $data['collection'] = $this->findCollectionIdByKey($collection);
 
         if (!file_exists($this->projectDir.'/'.$file)) {
-            throw new \DomainException(sprintf('Fixture file not found at %s', $this->projectDir.'/'.$file));
+            throw new \DomainException(\sprintf('Fixture file not found at %s', $this->projectDir.'/'.$file));
         }
         $uploadedFile = new UploadedFile($this->projectDir.'/'.$file, $filename);
         $this->mediaManager->save($uploadedFile, $data, 1);

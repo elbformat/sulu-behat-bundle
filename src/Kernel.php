@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Elbformat\SuluBehatBundle;
 
 /*
@@ -14,7 +16,7 @@ namespace Elbformat\SuluBehatBundle;
 use Sulu\Component\HttpKernel\SuluKernel;
 
 /**
- * @method  withOptions(array $options)
+ * @method withOptions(array $options)
  */
 class Kernel extends SuluKernel
 {

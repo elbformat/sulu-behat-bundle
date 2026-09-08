@@ -28,7 +28,7 @@ class SuluFormContext extends AbstractSuluContext
     }
 
     /**
-     * Clear all form contents before each scenario
+     * Clear all form contents before each scenario.
      *
      * @BeforeScenario
      */
@@ -51,7 +51,7 @@ class SuluFormContext extends AbstractSuluContext
     /**
      * @Given the form contains a(n) :type field
      */
-    public function theFormContainsAField(string $type, TableNode $tableNode = null): void
+    public function theFormContainsAField(string $type, ?TableNode $tableNode = null): void
     {
         $data = $this->getLastFormData();
         if (null !== $tableNode) {
@@ -62,7 +62,7 @@ class SuluFormContext extends AbstractSuluContext
             $fieldData = [];
         }
         $fieldData['type'] = $type;
-        if (!isset($data['fields']) || !is_array($data['fields'])) {
+        if (!isset($data['fields']) || !\is_array($data['fields'])) {
             $data['fields'] = [];
         }
         $data['fields'][] = $fieldData;
@@ -88,7 +88,7 @@ class SuluFormContext extends AbstractSuluContext
         $method = $controller->getMethod('getApiEntity');
         $method->setAccessible(true);
 
-        /** @var mixed[] */
+        /* @var mixed[] */
         return $method->invoke($cont, $this->getLastForm(), $this->getLocale());
     }
 }

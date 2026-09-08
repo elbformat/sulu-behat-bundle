@@ -4,66 +4,68 @@ declare(strict_types=1);
 
 namespace Elbformat\SuluBehatBundle\Context;
 
+use Behat\Behat\Context\Context;
 use Doctrine\ORM\EntityManagerInterface;
 use Sulu\Component\Webspace\Manager\WebspaceManagerInterface;
+use Sulu\Content\Domain\Model\ContentRichEntityInterface;
 
 /**
- * Webspace aware database context.
- *
- * @author Hannes Giesenow <hannes.giesenow@elbformat.de>
+ * Commons for ContentRichEntityInterface
  */
-abstract class AbstractSuluContext extends AbstractDatabaseContext
+abstract class AbstractContentRichContext implements Context
 {
-    protected WebspaceManagerInterface $webspaceManager;
+    public function __construct(
+        protected EntityManagerInterface $em,
+        protected WebspaceManagerInterface $webspaceManager,
+    ) {}
 
-    public function __construct(EntityManagerInterface $em, WebspaceManagerInterface $webspaceManager)
+    protected function exec(string $query): void
     {
-        parent::__construct($em);
-        $this->webspaceManager = $webspaceManager;
-    }
-
-    /**
-     * @BeforeScenario
-     */
-    public function resetRoutes(): void
-    {
-        // @rfe run only once per scenarion (and not per inheriting context)
-        $this->exec('DELETE FROM ro_routes');
+        $this->em->getConnection()->executeQuery($query);
     }
 
     protected function getWebspaceKey(): string
     {
-        $webspaces = $this->webspaceManager->getWebspaceCollection()
-            ->getWebspaces();
+        $webspaces = $this->webspaceManager->getWebspaceCollection()->getWebspaces();
         if (!$webspaces) {
             throw new \DomainException('No webspaces found!');
         }
+        // @todo match by hostname
 
-        return (string) array_keys($webspaces)[0];
+        return (string)array_keys($webspaces)[0];
     }
 
-    protected function getLocale(): string
+    protected function getDefaultLocale(?string $webspaceKey=null): string
     {
-        $webspaceKey = $this->getWebspaceKey();
+        $webspaceKey ??= $this->getWebspaceKey();
         $webspace = $this->webspaceManager->findWebspaceByKey($webspaceKey);
         if (null === $webspace) {
-            throw new \DomainException(sprintf('Webspace %s not found!', $webspaceKey));
+            throw new \DomainException(\sprintf('Webspace %s not found!', $webspaceKey));
         }
+
         return $webspace->getDefaultLocalization()->getLanguage();
     }
 
+    protected function getDefaultTemplate(): string
+    {
+        // @todo look into the config
+        return 'default';
+    }
+
     /**
-     * Convert data with dot notation into nested array structure
+     * Convert data with dot notation into nested array structure.
      *
      * @param array<string|int,string> $data
+     *
      * @return array<string|int,mixed>
      */
     protected function expandData(array $data): array
     {
+        // @todo use symfony propertyaccess syntax instead (see https://symfony.com/doc/7.4/components/property_access.html#writing-to-arrays)
         $newData = [];
         foreach ($data as $k => $v) {
             // Plain key
-            if (false === strpos((string)$k, '.')) {
+            if (!str_contains((string)$k, '.')) {
                 $newData[$k] = $this->replacePlaceholders($v);
                 continue;
             }
@@ -82,6 +84,7 @@ abstract class AbstractSuluContext extends AbstractDatabaseContext
     {
         // Replace line breaks
         $value = str_replace('\n', "\n", $value);
+
         return $value;
     }
 }
