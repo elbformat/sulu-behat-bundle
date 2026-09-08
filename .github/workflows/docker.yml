@@ -2,11 +2,10 @@ name: Create and publish a Docker image
 
 on:
   schedule:
-    - cron: '0 9 1 * *'
-#  push:
-#    branches:
-#      - fix_non_existent_references
-#      - main
+    - cron: '0 3 1 * *'
+  push:
+    branches:
+      - 'sulu-3'
 
 env:
   REGISTRY: ghcr.io
@@ -18,7 +17,9 @@ jobs:
     permissions:
       contents: read
       packages: write
-
+    strategy:
+      matrix:
+        php_version: ['8.3','8.4','8.5']
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -40,7 +41,8 @@ jobs:
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: docker
+          file: docker/Dockerfile.${{matrix.php_version}}
           push: true
           #tags: ${{ steps.meta.outputs.tags }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{matrix.php_version}}
           labels: ${{ steps.meta.outputs.labels }}

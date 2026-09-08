@@ -31,7 +31,7 @@ class SuluArticleContext extends AbstractPhpCrContext
     }
 
     /**
-     * Clear all ES contents before each scenario
+     * Clear all ES contents before each scenario.
      *
      * @BeforeScenario
      */
@@ -43,7 +43,7 @@ class SuluArticleContext extends AbstractPhpCrContext
     /**
      * @Given there is a(n) :type article :alias
      */
-    public function thereIsAnArticle(string $type, string $alias, TableNode $tableNode = null): void
+    public function thereIsAnArticle(string $type, string $alias, ?TableNode $tableNode = null): void
     {
         /** @var ArticleDocument $document */
         $document = $this->docManager->create('article');
@@ -60,7 +60,7 @@ class SuluArticleContext extends AbstractPhpCrContext
     /**
      * @Given the article contains a(n) :moduleName module in :blockName
      */
-    public function theArticleContainsAModuleIn(string $moduleName, string $blockName, TableNode $table = null): void
+    public function theArticleContainsAModuleIn(string $moduleName, string $blockName, ?TableNode $table = null): void
     {
         if (null !== $table) {
             /** @var array<string, string> $tableData */
@@ -77,6 +77,7 @@ class SuluArticleContext extends AbstractPhpCrContext
         if (null === $this->lastDocument) {
             throw new \DomainException('No document queried.');
         }
+
         return $this->lastDocument;
     }
 }

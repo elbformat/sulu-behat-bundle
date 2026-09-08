@@ -47,15 +47,17 @@ abstract class AbstractSuluContext extends AbstractDatabaseContext
         $webspaceKey = $this->getWebspaceKey();
         $webspace = $this->webspaceManager->findWebspaceByKey($webspaceKey);
         if (null === $webspace) {
-            throw new \DomainException(sprintf('Webspace %s not found!', $webspaceKey));
+            throw new \DomainException(\sprintf('Webspace %s not found!', $webspaceKey));
         }
+
         return $webspace->getDefaultLocalization()->getLanguage();
     }
 
     /**
-     * Convert data with dot notation into nested array structure
+     * Convert data with dot notation into nested array structure.
      *
      * @param array<string|int,string> $data
+     *
      * @return array<string|int,mixed>
      */
     protected function expandData(array $data): array
@@ -63,11 +65,11 @@ abstract class AbstractSuluContext extends AbstractDatabaseContext
         $newData = [];
         foreach ($data as $k => $v) {
             // Plain key
-            if (false === strpos((string)$k, '.')) {
+            if (!str_contains((string) $k, '.')) {
                 $newData[$k] = $this->replacePlaceholders($v);
                 continue;
             }
-            $parts = explode('.', (string)$k, 2);
+            $parts = explode('.', (string) $k, 2);
             $deepStructure = $this->expandData([$parts[1] => $v]);
             /** @var array<string,mixed> $existing */
             $existing = $newData[$parts[0]] ?? [];
@@ -82,6 +84,7 @@ abstract class AbstractSuluContext extends AbstractDatabaseContext
     {
         // Replace line breaks
         $value = str_replace('\n', "\n", $value);
+
         return $value;
     }
 }

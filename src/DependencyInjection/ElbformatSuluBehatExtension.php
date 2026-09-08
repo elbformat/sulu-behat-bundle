@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Elbformat\SuluBehatBundle\DependencyInjection;
 
 use Elbformat\SuluBehatBundle\Context\SuluArticleContext;

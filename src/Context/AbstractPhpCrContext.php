@@ -78,8 +78,8 @@ abstract class AbstractPhpCrContext extends AbstractSuluContext
         $moduleData['type'] = $moduleName;
         $data = [
             $blockName => [
-                $moduleData
-            ]
+                $moduleData,
+            ],
         ];
 
         $this->saveDocument($this->getLastDocument(), $data, $formType);
@@ -100,8 +100,9 @@ abstract class AbstractPhpCrContext extends AbstractSuluContext
         /** @var false|string $identifier */
         $identifier = $this->em->getConnection()->fetchOne('SELECT identifier FROM phpcr_nodes WHERE id=:id', ['id' => $id]);
         if (false === $identifier) {
-            throw new \DomainException(sprintf('No phpcr node found for ID %d', $id));
+            throw new \DomainException(\sprintf('No phpcr node found for ID %d', $id));
         }
+
         return $identifier;
     }
 

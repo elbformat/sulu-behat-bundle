@@ -23,7 +23,7 @@ class SuluPageContext extends AbstractPhpCrContext
      * @Given there is a(n) :template page as child of :parentId
      * @Given there is a(n) page as child of :parentId
      */
-    public function thereIsAPage(TableNode $tableNode, string $template = 'default', int $parentId = null): void
+    public function thereIsAPage(TableNode $tableNode, string $template = 'default', ?int $parentId = null): void
     {
         /** @var PageDocument $document */
         $document = $this->docManager->create('page');
@@ -40,7 +40,7 @@ class SuluPageContext extends AbstractPhpCrContext
     /**
      * @Given the page contains a(n) :moduleName module in :blockName
      */
-    public function thePageContainsAModuleIn(string $moduleName, string $blockName, TableNode $table = null): void
+    public function thePageContainsAModuleIn(string $moduleName, string $blockName, ?TableNode $table = null): void
     {
         if (null !== $table) {
             /** @var array<string, string> $tableData */
