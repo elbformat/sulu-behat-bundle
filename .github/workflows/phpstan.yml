@@ -1,0 +1,33 @@
+name: Static code analysis
+
+on:
+  pull_request:
+    branches: [ 'main' ]
+
+jobs:
+  phpstan:
+    name: phpstan (sf-${{matrix.symfony_version}} php-${{matrix.php_version}} form-${{matrix.sulu_form}})
+    runs-on: ubuntu-latest
+    container: ghcr.io/${{ github.repository }}/php:${{matrix.php_version}}
+    strategy:
+      matrix:
+        php_version: [ '8.3','8.4','8.5' ]
+        # No Symfony 8.x yet, as behat/behat does not support it.
+        symfony_version: [ '5.4', '6.4', '7.4' ]
+        sulu_form: [ true, false ]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin symfony version
+        run: composer config extra.symfony.require "^${{matrix.symfony_version}}"
+      - name: Composer install
+        run: composer install
+      - name: Add sulu form bundle
+        if: ${{ matrix.sulu_form }}
+        run: composer require sulu/form-bundle
+      - name: Run code analysis
+        if: ${{ matrix.sulu_form }}
+        run: vendor/bin/phpstan --memory-limit=-1
+      - name: Run code analysis
+        if: ${{ !matrix.sulu_form }}
+        run: vendor/bin/phpstan --memory-limit=-1 -cphpstan-no-form.neon

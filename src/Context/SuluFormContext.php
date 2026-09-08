@@ -5,30 +5,33 @@ declare(strict_types=1);
 namespace Elbformat\SuluBehatBundle\Context;
 
 use Behat\Gherkin\Node\TableNode;
+use Behat\Step\Given;
 use Doctrine\ORM\EntityManagerInterface;
 use Sulu\Bundle\FormBundle\Controller\FormController;
 use Sulu\Bundle\FormBundle\Entity\Form;
 use Sulu\Bundle\FormBundle\Manager\FormManager;
 use Sulu\Component\Webspace\Manager\WebspaceManagerInterface;
+use Webmozart\Assert\Assert;
 
 /**
- * Creating and testing sulu forms.
+ * Creating and testing sulu forms. Requires sulu/form-bundle to be installed.
  *
- * @author Hannes Giesenow <hannes.giesenow@elbformat.de>
+ * @phpstan-import-type InputData from AbstractSuluContext
  */
 class SuluFormContext extends AbstractSuluContext
 {
-    protected FormManager $formManager;
     protected ?Form $lastForm = null;
 
-    public function __construct(EntityManagerInterface $em, WebspaceManagerInterface $webspaceManager, FormManager $formManager)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        WebspaceManagerInterface $webspaceManager,
+        protected FormManager $formManager)
     {
-        parent::__construct($em, $webspaceManager);
-        $this->formManager = $formManager;
+        parent::__construct($entityManager, $webspaceManager);
     }
 
     /**
-     * Clear all form contents before each scenario
+     * Clear all form contents before each scenario.
      *
      * @BeforeScenario
      */
@@ -43,43 +46,30 @@ class SuluFormContext extends AbstractSuluContext
      */
     public function thereIsASuluForm(TableNode $tableNode): void
     {
-        /** @var array<string,string> $tableData */
-        $tableData = $tableNode->getRowsHash();
-        $this->lastForm = $this->formManager->save($this->expandData($tableData), $this->getLocale());
+        $data = $this->getData($tableNode);
+        Assert::string($data['locale']);
+        $this->lastForm = $this->formManager->save($data, $data['locale'] ?? $this->getDefaultLocale());
     }
 
-    /**
-     * @Given the form contains a(n) :type field
-     */
-    public function theFormContainsAField(string $type, TableNode $tableNode = null): void
+    #[Given('the form contains a(n) :type field')]
+    public function theFormContainsAField(string $type, ?TableNode $tableNode = null): void
     {
         $data = $this->getLastFormData();
-        if (null !== $tableNode) {
-            /** @var array<string,string> $tableData */
-            $tableData = $tableNode->getRowsHash();
-            $fieldData = $this->expandData($tableData);
-        } else {
-            $fieldData = [];
-        }
+        $fieldData = $this->getData($tableNode);
         $fieldData['type'] = $type;
-        if (!isset($data['fields']) || !is_array($data['fields'])) {
+        Assert::string($fieldData['locale']);
+        if (!isset($data['fields']) || !\is_array($data['fields'])) {
             $data['fields'] = [];
         }
         $data['fields'][] = $fieldData;
 
-        $this->lastForm = $this->formManager->save($data, $this->getLocale(), $this->getLastForm()->getId());
+        Assert::isInstanceOf($this->lastForm, Form::class);
+        $this->lastForm = $this->formManager->save($data, $fieldData['locale'] ?? $this->getDefaultLocale(), $this->lastForm->getId());
     }
 
-    protected function getLastForm(): Form
-    {
-        if (null === $this->lastForm) {
-            throw new \DomainException('No form selected');
-        }
-
-        return $this->lastForm;
-    }
-
-    /** @return mixed[] */
+    /**
+     * @return array<mixed,mixed>
+     */
     protected function getLastFormData(): array
     {
         // we need to call a private method in a static way to not copy&paste 80 lines of code
@@ -87,8 +77,10 @@ class SuluFormContext extends AbstractSuluContext
         $cont = $controller->newInstanceWithoutConstructor();
         $method = $controller->getMethod('getApiEntity');
         $method->setAccessible(true);
+        Assert::isInstanceOf($this->lastForm, Form::class);
+        $data = $method->invoke($cont, $this->lastForm, $this->getDefaultLocale());
+        Assert::isArray($data);
 
-        /** @var mixed[] */
-        return $method->invoke($cont, $this->getLastForm(), $this->getLocale());
+        return $data;
     }
 }

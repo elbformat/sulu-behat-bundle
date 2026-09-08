@@ -1,0 +1,15 @@
+name: Code Style
+
+on:
+  pull_request:
+    branches: [ 'main' ]
+
+jobs:
+  phpcsfixer:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/php-cs-fixer/php-cs-fixer:3.95-php8.3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run check
+        run: php-cs-fixer check --diff --format txt
