@@ -1,0 +1,8 @@
+services:
+  _defaults:
+    autoconfigure: true
+
+  Elbformat\SuluBehatBundle\Context\SuluFormContext:
+    parent: Elbformat\SuluBehatBundle\Context\AbstractSuluContext
+    arguments:
+      $formManager: '@sulu_form.manager.form'
