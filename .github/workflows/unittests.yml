@@ -1,0 +1,27 @@
+name: Tests
+
+on:
+  pull_request:
+    branches: [ 'main' ]
+
+jobs:
+  unittests:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/${{ github.repository }}/php:${{matrix.php_version}}
+    strategy:
+      fail-fast: true
+      matrix:
+        php_version: ['8.3','8.4','8.5']
+        symfony_version: [ '5.4', '6.4', '7.4' ]
+        sulu_form: [true, false]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin symfony version
+        run: composer config extra.symfony.require "^${{matrix.symfony_version}}"
+      - name: Add sulu form bundle
+        if: ${{ matrix.sulu_form }}
+        run: composer require sulu/form-bundle
+      - run: composer install
+      - name: Run test
+        run: vendor/bin/phpunit

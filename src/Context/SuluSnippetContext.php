@@ -4,70 +4,122 @@ declare(strict_types=1);
 
 namespace Elbformat\SuluBehatBundle\Context;
 
+use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
+use Behat\Hook\BeforeScenario;
+use Behat\Step\Given;
 use Doctrine\ORM\EntityManagerInterface;
-use Sulu\Bundle\SnippetBundle\Document\SnippetDocument;
-use Sulu\Bundle\SnippetBundle\Form\SnippetType;
-use Sulu\Bundle\SnippetBundle\Snippet\DefaultSnippetManagerInterface;
-use Sulu\Component\Content\Compat\Structure;
-use Sulu\Component\Content\Document\WorkflowStage;
-use Sulu\Component\DocumentManager\DocumentManagerInterface;
 use Sulu\Component\Webspace\Manager\WebspaceManagerInterface;
-use Symfony\Component\Form\FormFactoryInterface;
+use Sulu\Messenger\Infrastructure\Symfony\Messenger\FlushMiddleware\EnableFlushStamp;
+use Sulu\Snippet\Application\Message\ApplyWorkflowTransitionSnippetMessage;
+use Sulu\Snippet\Application\Message\CreateSnippetMessage;
+use Sulu\Snippet\Application\Message\ModifySnippetAreaMessage;
+use Sulu\Snippet\Domain\Model\SnippetInterface;
+use Sulu\Snippet\Domain\Repository\SnippetRepositoryInterface;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\HandleTrait;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Webmozart\Assert\Assert;
 
 /**
- * Creating and testing sulu snippets.
+ * Create snippets.
  *
- * @author Jens Stapelfeldt <jst@elbformat.de>
+ * @phpstan-import-type InputData from AbstractSuluContext
  */
-class SuluSnippetContext extends AbstractPhpCrContext
+class SuluSnippetContext extends AbstractSuluContext
 {
-    protected ?SnippetDocument $lastDocument = null;
-    protected DefaultSnippetManagerInterface $defaultSnippetManager;
+    use HandleTrait;
 
-    public function __construct(EntityManagerInterface $em, DocumentManagerInterface $docManager, FormFactoryInterface $formFactory, WebspaceManagerInterface $webspaceManager, DefaultSnippetManagerInterface $defaultSnippetManager)
-    {
-        parent::__construct($em, $webspaceManager, $docManager, $formFactory);
-        $this->defaultSnippetManager = $defaultSnippetManager;
+    protected ?SnippetInterface $lastSnippet = null;
+
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        WebspaceManagerInterface $webspaceManager,
+        MessageBusInterface $messageBus,
+        protected SnippetRepositoryInterface $snippetRepository,
+    ) {
+        parent::__construct($entityManager, $webspaceManager);
+        $this->messageBus = $messageBus;
     }
 
-    /**
-     * @Given there is a(n) :template snippet
-     */
-    public function thereIsASuluSnippet(TableNode $tableNode, string $template): void
+    #[BeforeScenario]
+    public function reset(): void
     {
-        /** @var SnippetDocument $document */
-        $document = $this->docManager->create(Structure::TYPE_SNIPPET);
+        $this->exec('DELETE FROM sn_snippet_dimension_contents');
+        $this->exec('DELETE FROM sn_snippets');
+    }
 
-        /** @var array<string, string> $data */
-        $data = $tableNode->getRowsHash();
+    #[Given('there is a(n) :template snippet')]
+    public function thereIsASuluSnippet(string $template, ?TableNode $tableNode = null, ?PyStringNode $yaml = null): void
+    {
+        $data = $this->getData($tableNode, $yaml);
+        $data = $this->applyDefaults($data);
         $data['template'] = $template;
+        $snippet = $this->createSnippet($data);
 
-        $document->setWorkflowStage(WorkflowStage::PUBLISHED);
-        $this->saveDocument($document, $this->expandData($data), SnippetType::class);
+        if ('publish' === $data['_action']) {
+            $this->publishSnippet($snippet);
+        }
+        $this->lastSnippet = $snippet;
+    }
 
-        $this->lastDocument = $document;
+    #[Given('the snippet is set as default for :area')]
+    public function theSnippetIsSetAsDefaultFor(string $area, ?TableNode $tableNode = null): void
+    {
+        Assert::isInstanceOf($this->lastSnippet, SnippetInterface::class);
+        /** @var array<string,string> $additional */
+        $additional = $tableNode?->getRowsHash() ?? [];
+        $webspace = $additional['_webspaceKey'] ?? $this->getWebspaceKey();
+        $locale = $additional['locale'] ?? $this->getDefaultLocale($webspace);
+        $this->setArea($area, webspaceKey: $webspace, locale: $locale);
+    }
+
+    /** @param InputData $data */
+    protected function createSnippet(array $data): SnippetInterface
+    {
+        $message = new CreateSnippetMessage($data);
+        $snippet = $this->handle(new Envelope($message, [new EnableFlushStamp()]));
+        Assert::isInstanceOf($snippet, SnippetInterface::class);
+
+        return $snippet;
+    }
+
+    protected function publishSnippet(SnippetInterface $snippet, ?string $locale = null): void
+    {
+        $locale ??= $this->getDefaultLocale();
+        $message = new ApplyWorkflowTransitionSnippetMessage(['uuid' => $snippet->getUuid()], $locale, 'publish');
+        /* @see \Sulu\Snippet\Application\MessageHandler\ApplyWorkflowTransitionSnippetMessageHandler */
+        $this->handle(new Envelope($message, [new EnableFlushStamp()]));
+    }
+
+    public function setArea(string $area, ?SnippetInterface $snippet = null, ?string $webspaceKey = null, ?string $locale = null): void
+    {
+        $snippet ??= $this->lastSnippet;
+        Assert::isInstanceOf($snippet, SnippetInterface::class);
+        $webspaceKey ??= $this->getWebspaceKey();
+        $locale ??= $this->getDefaultLocale($webspaceKey);
+        $data = [
+            'webspaceKey' => $webspaceKey,
+            'snippetIdentifier' => ['uuid' => $snippet->getUuid()],
+            'areaKey' => $area,
+            'locale' => $locale,
+        ];
+        $message = new ModifySnippetAreaMessage($data);
+        /* @see \Sulu\Snippet\Application\MessageHandler\ModifySnippetAreaMessageHandler */
+        $this->handle(new Envelope($message, [new EnableFlushStamp()]));
     }
 
     /**
-     * @Given the snippet is set as default for :area
+     * @param InputData $data
+     *
+     * @return InputData
      */
-    public function theSnippetIsSetAsDefaultFor(string $area): void
+    protected function applyDefaults(array $data): array
     {
-        $this->defaultSnippetManager->save(
-            $this->getWebspaceKey(),
-            $area,
-            $this->getLastDocument()->getUuid(),
-            $this->getLocale(),
-        );
-    }
+        $data['_action'] ??= 'publish';
+        $data['title'] ??= 'new-snippet';
+        $data['locale'] ??= $this->getDefaultLocale();
 
-    protected function getLastDocument(): SnippetDocument
-    {
-        if (null === $this->lastDocument) {
-            throw new \DomainException('No snippet queried.');
-        }
-
-        return $this->lastDocument;
+        return $data;
     }
 }

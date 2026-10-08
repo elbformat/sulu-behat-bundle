@@ -1,0 +1,36 @@
+FROM php:8.5-alpine
+LABEL org.opencontainers.image.source="https://github.com/elbformat/sulu-behat-bundle"
+
+# For clock-mock
+# We need to take latest to have PHP 8.4 compatibility.
+RUN cd /tmp && \
+    apk add --no-cache --virtual .build-deps $PHPIZE_DEPS &&\
+    wget https://github.com/krakjoe/uopz/archive/14c8fc2d6eff14ec9acd926b9cab85d6961c64ac.zip -O - | unzip - &&\
+    cd uopz-14c8fc2d6eff14ec9acd926b9cab85d6961c64ac &&\
+    phpize &&\
+    ./configure --enable-uopz &&\
+    make &&\
+    make install &&\
+    rm -rf /tmp/* &&\
+    docker-php-ext-enable uopz
+
+# For code coverage
+RUN apk add --no-cache --virtual .build-deps autoconf g++ make && \
+    pecl install pcov-1.0.12 && \
+    apk del .build-deps && \
+    rm -rf /tmp/* &&\
+    docker-php-ext-enable pcov
+
+# For debugging
+RUN apk add --no-cache --virtual .build-deps autoconf g++ make linux-headers &&\
+    pecl install xdebug-3.5.3 && \
+    apk del .build-deps && \
+    rm -rf /tmp/*
+
+# Composer
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
+
+# For codecov upload inside circleci
+RUN apk add gpg gpg-agent gpgv
+ENV COMPOSER_MEMORY_LIMIT=-1
+WORKDIR /var/www

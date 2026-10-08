@@ -1,0 +1,34 @@
+name: Composer
+
+on:
+  pull_request:
+    branches: [ 'main' ]
+
+jobs:
+  validate:
+    name: Composer validate (sf-${{matrix.symfony_version}} php-${{matrix.php_version}} form-${{matrix.sulu_form}})
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/${{ github.repository }}/php:${{matrix.php_version}}
+    strategy:
+      matrix:
+        php_version: [ '8.3','8.4','8.5' ]
+        # No Symfony 8.x yet, as behat/behat does not support it.
+        symfony_version: [ '5.4', '6.4', '7.4']
+        sulu_form: [true, false]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin symfony version
+        run: composer config extra.symfony.require "^${{matrix.symfony_version}}"
+      - name: Add sulu form bundle
+        if: ${{ matrix.sulu_form }}
+        run: composer require sulu/form-bundle
+      - name: Run check
+        run: composer validate
+      - name: Ensure sulu/form-bundle is not in composer.json
+        if: ${{ !matrix.sulu_form }}
+        run: |
+          if grep -q '"sulu/form-bundle"' composer.json; then
+            echo "::error file=composer.json::sulu/form-bundle must not be committed in composer.json"
+            exit 1
+          fi
