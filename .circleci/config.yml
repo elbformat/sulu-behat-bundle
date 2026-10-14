@@ -24,7 +24,7 @@ jobs:
                   DATABASE_URL: 'mysql://test:test@127.0.0.1:3306/test?serverVersion=mariadb-10.6.15'
                   ELASTICSEARCH_HOST: '127.0.0.1:9200'
                   MAILER_DSN: 'null://localhost'
-            - image: 'mariadb:10.6'
+            - image: 'mariadb:10.11'
               environment:
                   MYSQL_ROOT_PASSWORD: 'root'
                   MYSQL_DATABASE: 'test'
@@ -52,7 +52,7 @@ jobs:
                   DATABASE_URL: 'mysql://test:test@127.0.0.1:3306/test?serverVersion=mariadb-10.6.15'
                   ELASTICSEARCH_HOST: '127.0.0.1:9200'
                   MAILER_DSN: 'null://localhost'
-            - image: 'mariadb:10.6'
+            - image: 'mariadb:10.11'
               environment:
                   MYSQL_ROOT_PASSWORD: 'root'
                   MYSQL_DATABASE: 'test'
