@@ -11,9 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 /**
- * This extension helps putting the kernel into the correct "suluContext".
- *
- * @author Hannes Giesenow <hannes.giesenow@elbformat.de>
+ * This extension puts the kernel into the correct "suluContext".
  */
 final class SuluExtension implements Extension
 {
@@ -46,6 +44,7 @@ final class SuluExtension implements Extension
         $this->loadKernel($container, $config);
     }
 
+    /** @param array<string, mixed> $config */
     private function loadKernel(ContainerBuilder $container, array $config): void
     {
         try {

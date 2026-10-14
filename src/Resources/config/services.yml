@@ -1,30 +1,46 @@
 services:
   _defaults:
-    autowire: true
     autoconfigure: true
 
-  Elbformat\SuluBehatBundle\Context\:
-    resource: '../../Context/*Context.php'
-    # Dependencies must be checked first -> Will be done in DI Extension
-    exclude:
-      - '../../Context/SuluArticleContext.php'
-      - '../../Context/SuluCommunityContext.php'
-      - '../../Context/SuluFormContext.php'
+  Elbformat\SuluBehatBundle\Context\AbstractSuluContext:
+    abstract: true
+    arguments:
+      $entityManager: '@doctrine.orm.entity_manager'
+      $webspaceManager: '@sulu_core.webspace.webspace_manager'
 
   Elbformat\SuluBehatBundle\Context\SuluAdminContext:
     arguments:
       $state: '@Elbformat\SymfonyBehatBundle\Browser\State'
+      $kernel: '@kernel'
+
+  Elbformat\SuluBehatBundle\Context\SuluArticleContext:
+    parent: Elbformat\SuluBehatBundle\Context\AbstractSuluContext
+    arguments:
+      $messageBus: '@sulu_message_bus'
+      $articleRepository: '@sulu_article.article_repository'
 
   Elbformat\SuluBehatBundle\Context\SuluMediaContext:
+    parent: Elbformat\SuluBehatBundle\Context\AbstractSuluContext
     arguments:
+      $mediaManager: '@sulu_media.media_manager'
+      $collectionManager: '@sulu_media.collection_manager'
       $projectDir: '%kernel.project_dir%'
+
+  Elbformat\SuluBehatBundle\Context\SuluPageContext:
+    parent: Elbformat\SuluBehatBundle\Context\AbstractSuluContext
+    arguments:
+      $messageBus: '@sulu_message_bus'
+      $pageRepository: '@sulu_page.page_repository'
+      $routeRepository: '@sulu_route.route_repository'
+
+  Elbformat\SuluBehatBundle\Context\SuluSnippetContext:
+    parent: Elbformat\SuluBehatBundle\Context\AbstractSuluContext
+    arguments:
+      $messageBus: '@sulu_message_bus'
+      $snippetRepository: '@sulu_snippet.snippet_repository'
 
   # Test double
   Elbformat\SuluBehatBundle\Sulu\DateTimeRequestProcessor:
     decorates: 'sulu_core.request_processor.date_time'
     tags:
       - { name: 'sulu.context', context: "website" }
-
-  # Aliases for autowiring
-  Sulu\Component\DocumentManager\DocumentManagerInterface: '@sulu_document_manager.document_manager'
-  Sulu\Bundle\MediaBundle\Collection\Manager\CollectionManagerInterface: '@sulu_media.collection_manager'

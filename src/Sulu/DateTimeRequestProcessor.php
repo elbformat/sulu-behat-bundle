@@ -10,8 +10,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Test-Double to manipulate the request's date used by sulu.
- *
- * @author Hannes Giesenow <hannes.giesenow@elbformat.de>
  */
 class DateTimeRequestProcessor extends SuluDateTimeRequestProcessor
 {

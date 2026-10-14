@@ -4,37 +4,32 @@ declare(strict_types=1);
 
 namespace Elbformat\SuluBehatBundle\Context;
 
+use Behat\Behat\Context\Context;
 use Doctrine\ORM\EntityManagerInterface;
+use Elbformat\SymfonyBehatBundle\Context\TableOrStringTrait;
 use Sulu\Component\Webspace\Manager\WebspaceManagerInterface;
 
 /**
- * Webspace aware database context.
- *
- * @author Hannes Giesenow <hannes.giesenow@elbformat.de>
+ * Commons for database reset and argument handling.
  */
-abstract class AbstractSuluContext extends AbstractDatabaseContext
+abstract class AbstractSuluContext implements Context
 {
-    protected WebspaceManagerInterface $webspaceManager;
+    use TableOrStringTrait;
 
-    public function __construct(EntityManagerInterface $em, WebspaceManagerInterface $webspaceManager)
-    {
-        parent::__construct($em);
-        $this->webspaceManager = $webspaceManager;
+    public function __construct(
+        protected EntityManagerInterface $entityManager,
+        protected WebspaceManagerInterface $webspaceManager,
+    ) {
     }
 
-    /**
-     * @BeforeScenario
-     */
-    public function resetRoutes(): void
+    protected function exec(string $query): void
     {
-        // @rfe run only once per scenarion (and not per inheriting context)
-        $this->exec('DELETE FROM ro_routes');
+        $this->entityManager->getConnection()->executeQuery($query);
     }
 
-    protected function getWebspaceKey(): string
+    protected function getDefaultWebspaceKey(): string
     {
-        $webspaces = $this->webspaceManager->getWebspaceCollection()
-            ->getWebspaces();
+        $webspaces = $this->webspaceManager->getWebspaceCollection()->getWebspaces();
         if (!$webspaces) {
             throw new \DomainException('No webspaces found!');
         }
@@ -42,46 +37,21 @@ abstract class AbstractSuluContext extends AbstractDatabaseContext
         return (string) array_keys($webspaces)[0];
     }
 
-    protected function getLocale(): string
+    protected function getDefaultLocale(?string $webspaceKey = null): string
     {
-        $webspaceKey = $this->getWebspaceKey();
+        $webspaceKey ??= $this->getDefaultWebspaceKey();
         $webspace = $this->webspaceManager->findWebspaceByKey($webspaceKey);
         if (null === $webspace) {
-            throw new \DomainException(sprintf('Webspace %s not found!', $webspaceKey));
+            throw new \DomainException(\sprintf('Webspace %s not found!', $webspaceKey));
         }
+
         return $webspace->getDefaultLocalization()->getLanguage();
     }
 
-    /**
-     * Convert data with dot notation into nested array structure
-     *
-     * @param array<string|int,string> $data
-     * @return array<string|int,mixed>
-     */
-    protected function expandData(array $data): array
+    protected function getDefaultTemplate(string $webspaceKey, string $type): string
     {
-        $newData = [];
-        foreach ($data as $k => $v) {
-            // Plain key
-            if (false === strpos((string)$k, '.')) {
-                $newData[$k] = $this->replacePlaceholders($v);
-                continue;
-            }
-            $parts = explode('.', (string)$k, 2);
-            $deepStructure = $this->expandData([$parts[1] => $v]);
-            /** @var array<string,mixed> $existing */
-            $existing = $newData[$parts[0]] ?? [];
-            $newData[$parts[0]] = array_merge_recursive($existing, $deepStructure);
-        }
+        $webspace = $this->webspaceManager->findWebspaceByKey($webspaceKey);
 
-        return $newData;
-    }
-
-    /** to be overridden by extending contexts */
-    protected function replacePlaceholders(string $value): string
-    {
-        // Replace line breaks
-        $value = str_replace('\n', "\n", $value);
-        return $value;
+        return $webspace?->getDefaultTemplate($type) ?? 'default';
     }
 }

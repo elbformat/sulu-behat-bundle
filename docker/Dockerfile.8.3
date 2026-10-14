@@ -1,0 +1,30 @@
+FROM php:8.3-alpine
+LABEL org.opencontainers.image.source="https://github.com/elbformat/sulu-behat-bundle"
+
+# For clock-mock
+RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS &&\
+    pecl install uopz-7.1.1 &&\
+    apk del .build-deps &&\
+    docker-php-ext-enable uopz
+
+# For code coverage
+RUN apk add --no-cache --virtual .build-deps autoconf g++ make && \
+    pecl install pcov-1.0.12 && \
+    apk del .build-deps && \
+    rm -rf /tmp/* &&\
+    docker-php-ext-enable pcov
+
+# For debugging
+RUN apk add --no-cache --virtual .build-deps autoconf g++ make linux-headers &&\
+    pecl install xdebug-3.5.3 && \
+    apk del .build-deps && \
+    rm -rf /tmp/*
+
+# Composer
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
+
+# For codecov upload inside circleci
+RUN apk add gpg gpg-agent gpgv
+ENV COMPOSER_MEMORY_LIMIT=-1
+WORKDIR /var/www
+
