@@ -1,6 +1,6 @@
 ## Version
 
-### v2.0 (Sulu 3)
+### v2.0.0 Sulu 3 compatibility
 Completely reworked Page, Article and Snippet Contexts, as sulu now uses it's own content structure.
 This Contexts may not be feature-complete, but should provide a solid base for future enhancements.
 
@@ -13,9 +13,9 @@ This is achieved by using elbformat/symfony-behat-bundle:^1.6. See the [changelo
 
 ## Improvements
 * Build now uses github actions and matrix builds (php versions, with/without form bundle)
-* 
 
 ## BC Breaks
+* Dropped Sulu 2 Support
 * Removed `Given there is a(n) (:template) page as child of :parentId` in favor of `_parentId` or `_parentSlug`.
 
 Before
