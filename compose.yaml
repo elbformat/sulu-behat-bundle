@@ -9,7 +9,7 @@ services:
       TZ: "Europe/Berlin"
 
   php:
-    image: ghcr.io/elbformat/sulu-behat-bundle/php:8.4
+    image: ghcr.io/elbformat/sulu-behat-bundle/php:8.5
     working_dir: /var/www
 #    environment:
 #      DATABASE_URL: 'mysql://test:test@mysql:3306/test?serverVersion=mariadb-10.6.15'
