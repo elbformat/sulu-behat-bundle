@@ -23,7 +23,7 @@
     "php": ">=8.3",
     "ext-dom": "*",
     "ext-json": "*",
-    "behat/behat": "^3.8",
+    "behat/behat": "^4.0",
     "elbformat/symfony-behat-bundle": "^1.6",
     "friends-of-behat/symfony-extension": "^2.2",
     "sulu/sulu": "^3.0",
